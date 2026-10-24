@@ -1,0 +1,182 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ladybug Debugger JS: installazione e quick start | Docs</title><style>body{margin:0;background:#050506;padding:0}</style><style>
+/* BeeLadybug Docs — foglio condiviso. Tutto sotto .bld-docs */
+.bld-docs{--bg:#0b0b0d;--panel:#141418;--line:#26262c;--red:#E63946;--red2:#ff5c69;--cyan:#22d3ee;--amber:#f5a524;--txt:#e8e8ec;--mut:#9a9aa6;
+ background:var(--bg);color:var(--txt);font:16px/1.65 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ background-image:radial-gradient(rgba(255,255,255,.035) 1.5px,transparent 1.6px);background-size:22px 22px;border-radius:14px;overflow:hidden}
+.bld-docs *{box-sizing:border-box}
+.bld-docs a{color:var(--red2);text-decoration:none}.bld-docs a:hover{text-decoration:underline}
+.bld-docs code{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.88em}
+.bld-docs :not(pre)>code{background:#1d1d23;color:var(--cyan);padding:.1em .4em;border-radius:5px}
+.bld-docs .bld-nav{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:28px;padding:14px 32px;background:rgba(11,11,13,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bld-docs .bld-logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--txt);letter-spacing:.2px}
+.bld-docs .bld-dot{width:22px;height:22px;border-radius:50%;background:var(--red);position:relative;box-shadow:0 0 14px rgba(230,57,70,.5)}
+.bld-docs .bld-dot:before,.bld-docs .bld-dot:after{content:"";position:absolute;width:5px;height:5px;background:#000;border-radius:50%;top:6px;left:5px;box-shadow:7px 0 #000,3px 6px #000}
+.bld-docs .bld-dot:after{width:1.5px;height:22px;top:0;left:10px;border-radius:0;box-shadow:none}
+.bld-docs .bld-nav ul{display:flex;gap:6px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+.bld-docs .bld-nav li a{display:block;padding:6px 14px;border-radius:999px;color:var(--mut);font-weight:600;font-size:14px}
+.bld-docs .bld-nav li a:hover{color:var(--txt);background:#1b1b20;text-decoration:none}
+.bld-docs .bld-nav li a.is-active{color:#fff;background:var(--red)}
+.bld-docs .bld-ver{margin-left:auto;font-size:12px;color:var(--cyan);border:1px solid #164e5a;padding:3px 10px;border-radius:999px}
+.bld-docs .bld-wrap{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:48px;max-width:1180px;margin:0 auto;padding:40px 32px 56px}
+.bld-docs .bld-hero{padding:8px 0 24px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.bld-docs .bld-eyebrow{color:var(--red2);font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase}
+.bld-docs h1{font-size:44px;line-height:1.1;margin:10px 0 14px;letter-spacing:-.8px}
+.bld-docs h1 span{color:var(--red)}
+.bld-docs .bld-lead{font-size:19px;color:#c9c9d2;max-width:680px;margin:0}
+.bld-docs blockquote{margin:20px 0 0;padding:12px 18px;border-left:3px solid var(--red);background:#16161b;color:var(--mut);border-radius:0 8px 8px 0;font-style:italic}
+.bld-docs h2{font-size:26px;margin:44px 0 12px;scroll-margin-top:80px;display:flex;align-items:center;gap:10px}
+.bld-docs h2:before{content:"";width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px rgba(230,57,70,.15)}
+.bld-docs h3{font-size:18px;margin:26px 0 8px;color:#f2f2f5}
+.bld-docs p{color:#cfcfd8}
+.bld-docs .bld-code{position:relative;margin:14px 0 20px;background:#08090b;border:1px solid #1c2a2f;border-radius:10px;overflow:hidden}
+.bld-docs .bld-code-head{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;background:#0f1417;border-bottom:1px solid #1c2a2f;font-size:12px;color:#6fb9c7;font-family:ui-monospace,Menlo,monospace}
+.bld-docs .bld-copy{background:transparent;border:1px solid #23414a;color:var(--cyan);font-size:12px;padding:3px 10px;border-radius:6px;cursor:pointer}
+.bld-docs .bld-copy:hover{background:#0f2a31}.bld-docs .bld-copy.ok{border-color:var(--red);color:var(--red2)}
+.bld-docs pre{margin:0;padding:14px 16px;overflow-x:auto;color:#d6f6fb;line-height:1.55}
+.bld-docs .k{color:var(--red2)}.bld-docs .s{color:#a7f3d0}.bld-docs .c{color:#5b6b72;font-style:italic}.bld-docs .f{color:var(--cyan)}
+.bld-docs table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px;background:var(--panel);border-radius:10px;overflow:hidden}
+.bld-docs th,.bld-docs td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.bld-docs th{background:#1a1a20;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.bld-docs kbd{display:inline-block;min-width:34px;text-align:center;padding:2px 8px;border-radius:6px;background:#1f1f25;border:1px solid #33333c;border-bottom-width:3px;font:600 13px ui-monospace,monospace;color:#fff}
+.bld-docs .bld-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:16px 0}
+.bld-docs .bld-card{display:block;padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--txt);transition:.15s}
+.bld-docs .bld-card:hover{border-color:var(--red);transform:translateY(-2px);text-decoration:none;box-shadow:0 8px 24px rgba(230,57,70,.12)}
+.bld-docs .bld-card b{display:block;font-size:16px;margin:8px 0 4px}.bld-docs .bld-card small{color:var(--mut);font-size:13.5px;line-height:1.45;display:block}
+.bld-docs .bld-ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:rgba(230,57,70,.12);color:var(--red2);font-size:17px}
+.bld-docs .bld-badge{display:inline-block;font:600 11px ui-monospace,monospace;padding:2px 8px;border-radius:999px;background:#0f2a31;color:var(--cyan);margin-right:4px}
+.bld-docs .bld-badge.warn{background:#2e2108;color:var(--amber)}.bld-docs .bld-badge.err{background:#2e0e12;color:var(--red2)}
+.bld-docs .bld-try{margin:24px 0;padding:20px 22px;border-radius:12px;background:linear-gradient(135deg,rgba(34,211,238,.08),rgba(230,57,70,.08));border:1px solid #1f3a40}
+.bld-docs .bld-try h3{margin-top:0;color:var(--cyan)}
+.bld-docs .bld-note{padding:12px 16px;border-radius:8px;background:#1a1410;border:1px solid #3a2a12;color:#e9c98c;font-size:14.5px}
+.bld-docs .bld-toc{position:sticky;top:84px;align-self:start;font-size:14px}
+.bld-docs .bld-toc p{font-size:12px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mut);margin:0 0 10px;font-weight:700}
+.bld-docs .bld-toc ul{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}
+.bld-docs .bld-toc a{display:block;padding:5px 14px;color:var(--mut);margin-left:-1px;border-left:2px solid transparent}
+.bld-docs .bld-toc a:hover,.bld-docs .bld-toc a.is-on{color:var(--txt);border-left-color:var(--red);text-decoration:none}
+.bld-docs .bld-pager{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line)}
+.bld-docs .bld-pager a{padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--txt)}
+.bld-docs .bld-pager a:hover{border-color:var(--red);text-decoration:none}
+.bld-docs .bld-pager small{display:block;color:var(--mut);font-size:12px}.bld-docs .bld-pager .next{text-align:right;grid-column:2}
+.bld-docs .bld-pager .is-off{opacity:.4;pointer-events:none}
+@media(max-width:960px){.bld-docs .bld-wrap{grid-template-columns:1fr}.bld-docs .bld-toc{display:none}}
+@media(max-width:640px){.bld-docs .bld-nav{flex-wrap:wrap;gap:10px;padding:12px 16px}.bld-docs .bld-nav ul{overflow-x:auto;flex-wrap:nowrap;width:100%}.bld-docs .bld-ver{display:none}
+.bld-docs .bld-wrap{padding:28px 16px}.bld-docs h1{font-size:32px}.bld-docs .bld-lead{font-size:17px}.bld-docs table{font-size:13.5px}.bld-docs th,.bld-docs td{padding:8px}.bld-docs .bld-pager{grid-template-columns:1fr}.bld-docs .bld-pager .next{grid-column:1}}
+</style></head><body>
+<div class="bld-docs">
+  <nav class="bld-nav" aria-label="Documentazione BeeLadybug">
+    <a class="bld-logo" href="/bee-ladybug/inizia/"><span class="bld-dot"></span>BeeLadybug <span style="color:var(--mut);font-weight:500">docs</span></a>
+    <ul>
+      <li><a class="is-active" href="/bee-ladybug/inizia/" aria-current="page">Inizia</a></li>
+      <li><a href="/bee-ladybug/concetti/">Concetti</a></li>
+      <li><a href="/bee-ladybug/adapter/">Adapter</a></li>
+      <li><a href="/bee-ladybug/api/">API</a></li>
+      <li><a href="/bee-ladybug/risorse/">Risorse</a></li>
+    </ul>
+    <span class="bld-ver">v0.5.4</span>
+  </nav>
+
+  <div class="bld-wrap">
+    <main>
+      <header class="bld-hero">
+        <div class="bld-eyebrow">Inizia</div>
+        <h1>Un debugger, <span>qualsiasi</span> sorgente.</h1>
+        <p class="bld-lead">BeeLadybug è un overlay di telemetria e ispezione visiva open source. Riceve pacchetti grezzi da giochi Canvas 2D, pagine DOM, bot headless, processi Python e pipeline AI, e li mostra in un'unica console scura.</p>
+        <blockquote>Il Core non sa cosa sta monitorando. Riceve solo dati grezzi.</blockquote>
+      </header>
+
+      <h2 id="installazione">Installazione</h2>
+      <div class="bld-code"><div class="bld-code-head">bash<button class="bld-copy">Copia</button></div><pre><code>npm i bee-ladybug</code></pre></div>
+      <p>L'overlay vive in uno <strong>Shadow DOM</strong>, non sul Canvas: funziona sopra un gioco, sopra una pagina o da solo in una sandbox, senza toccare i tuoi stili.</p>
+
+      <h2 id="quick-start">Quick start</h2>
+      <h3>1. Avvia un server statico</h3>
+      <p>I moduli ES non partono da <code>file://</code>.</p>
+      <div class="bld-code"><div class="bld-code-head">bash<button class="bld-copy">Copia</button></div><pre><code>python -m http.server 8080</code></pre></div>
+      <h3>2. Importa il Core</h3>
+      <div class="bld-code"><div class="bld-code-head">app.js<button class="bld-copy">Copia</button></div><pre><code><span class="k">import</span> { BeeLadybugCore } <span class="k">from</span> <span class="s">'bee-ladybug'</span>;
+
+<span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>();
+bee.<span class="f">sendData</span>(<span class="s">'log'</span>, { message: <span class="s">'boot'</span>, source: <span class="s">'app'</span> });</code></pre></div>
+      <h3>3. Invia pacchetti</h3>
+      <p>Tutto passa da <code>sendData(type, payload)</code>. Ogni pacchetto riceve <code>wallTime</code>, <code>simTime</code> e <code>frame</code>.</p>
+      <div class="bld-code"><div class="bld-code-head">js<button class="bld-copy">Copia</button></div><pre><code>bee.<span class="f">sendData</span>(<span class="s">'fps'</span>,    { value: <span class="s">61</span> });
+bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <span class="s">'heap'</span>, value: <span class="s">42</span>, unit: <span class="s">'MB'</span> });
+bee.<span class="f">sendData</span>(<span class="s">'warn'</span>,   { message: <span class="s">'slow frame'</span> });
+bee.<span class="f">sendData</span>(<span class="s">'error'</span>,  { source: <span class="s">'ai'</span>, message: <span class="s">'timeout'</span> });</code></pre></div>
+      <p><span class="bld-badge">fps</span><span class="bld-badge">metric</span><span class="bld-badge">log</span><span class="bld-badge warn">warn</span><span class="bld-badge err">error</span> Tabella completa dei tipi in <a href="/bee-ladybug/concetti/">Concetti → Contratto sendData</a>.</p>
+      <h3>4. Modalità headless</h3>
+      <p>Per bot, test o Node senza DOM: nessuna UI, solo buffer e clock.</p>
+      <div class="bld-code"><div class="bld-code-head">js<button class="bld-copy">Copia</button></div><pre><code><span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>({ ui: <span class="k">false</span>, mount: <span class="k">false</span>, autoAttach: <span class="k">false</span> });
+bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <span class="s">'loss'</span>, value: <span class="s">0.12</span> });</code></pre></div>
+
+      <h2 id="tasti">Tasti rapidi</h2>
+      <table>
+        <thead><tr><th>Tasto</th><th>Azione</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>F2</kbd></td><td>Mostra / nascondi overlay (e hitbox canvas)</td></tr>
+          <tr><td><kbd>F3</kbd></td><td>Slow-motion del tempo fittizio (<code>0.25x</code> / <code>1x</code>)</td></tr>
+          <tr><td><kbd>F4</kbd></td><td>Freeze / run del tempo fittizio</td></tr>
+          <tr><td><kbd>F6</kbd></td><td>CSS hunt, se <code>CSSAdapter</code> è attaccato</td></tr>
+          <tr><td><kbd>P</kbd></td><td>Blocca il pannello CSS sull'elemento corrente (hunt attiva)</td></tr>
+          <tr><td><kbd>S</kbd></td><td>Scansione CSS (hunt attiva)</td></tr>
+        </tbody>
+      </table>
+      <p class="bld-note">Niente <code>F12</code> né tilde: sui layout italiani la tilde non è un tasto unico.</p>
+
+      <h2 id="adapter">Scegli un adapter</h2>
+      <p>Gli adapter traducono un mondo specifico in <code>sendData()</code>. Il Core resta cieco.</p>
+      <div class="bld-cards">
+        <a class="bld-card" href="/bee-ladybug/adapter/canvas/"><span class="bld-ico">▣</span><b>CanvasAdapter</b><small>Hitbox, collisioni, FPS e coordinate per giochi Canvas 2D.</small></a>
+        <a class="bld-card" href="/bee-ladybug/adapter/webdom/"><span class="bld-ico">⌗</span><b>WebDOMAdapter</b><small>Box model, nodo sotto il puntatore, mutazioni del DOM.</small></a>
+        <a class="bld-card" href="/bee-ladybug/adapter/css-hunt/"><span class="bld-ico">◎</span><b>CSS hunt</b><small><code>!important</code>, overflow, stacking context e click intercettati.</small></a>
+        <a class="bld-card" href="/bee-ladybug/adapter/ant/"><span class="bld-ico">⋰</span><b>AntAdapter</b><small>Telemetria per agenti e bot.</small></a>
+        <a class="bld-card" href="/bee-ladybug/adapter/spider/"><span class="bld-ico">✶</span><b>SpiderAdapter</b><small>Monitoraggio di crawler e scansioni.</small></a>
+        <a class="bld-card" href="/bee-ladybug/adapter/python/"><span class="bld-ico">⟩_</span><b>PythonBridge</b><small>Invia metriche da un processo Python all'overlay.</small></a>
+      </div>
+
+      <section class="bld-try" id="prova">
+        <h3>▶ Prova in console</h3>
+        <p>Apri la pagina col server attivo, premi <kbd>F2</kbd> e incolla nella console del browser:</p>
+        <div class="bld-code"><div class="bld-code-head">console<button class="bld-copy">Copia</button></div><pre><code>bee.<span class="f">sendData</span>(<span class="s">'log'</span>, { source: <span class="s">'human'</span>, message: <span class="s">'hello core'</span> })
+bee.<span class="f">sendData</span>(<span class="s">'fps'</span>, { value: <span class="s">61</span> })
+bee.<span class="f">sendData</span>(<span class="s">'error'</span>, { source: <span class="s">'ai'</span>, message: <span class="s">'timeout'</span> })</code></pre></div>
+        <p style="margin:0">Poi premi <kbd>F4</kbd>: il clock fittizio si ferma, l'overlay no.</p>
+      </section>
+
+      <nav class="bld-pager" aria-label="Navigazione pagine">
+        <a class="next" href="/bee-ladybug/concetti/"><small>Successivo</small>Concetti →</a>
+      </nav>
+    </main>
+
+    <aside class="bld-toc">
+      <p>In questa pagina</p>
+      <ul>
+        <li><a href="#installazione">Installazione</a></li>
+        <li><a href="#quick-start">Quick start</a></li>
+        <li><a href="#tasti">Tasti rapidi</a></li>
+        <li><a href="#adapter">Scegli un adapter</a></li>
+        <li><a href="#prova">Prova in console</a></li>
+      </ul>
+    </aside>
+  </div>
+
+  <script>
+  (function(){
+    var root=document.currentScript.closest('.bld-docs');
+    root.querySelectorAll('.bld-copy').forEach(function(b){
+      b.addEventListener('click',function(){
+        var t=b.closest('.bld-code').querySelector('pre').innerText;
+        navigator.clipboard.writeText(t).then(function(){b.textContent='Copiato ✓';b.classList.add('ok');
+          setTimeout(function(){b.textContent='Copia';b.classList.remove('ok')},1600)});
+      });
+    });
+    var links=root.querySelectorAll('.bld-toc a');
+    if('IntersectionObserver' in window){
+      var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){
+        links.forEach(function(l){l.classList.toggle('is-on',l.getAttribute('href')==='#'+e.target.id)})}})},{rootMargin:'-20% 0px -70% 0px'});
+      root.querySelectorAll('h2[id],section[id]').forEach(function(h){io.observe(h)});
+    }
+  })();
+  </script>
+</div>
+</body></html>
