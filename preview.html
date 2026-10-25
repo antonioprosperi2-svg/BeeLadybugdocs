@@ -801,14 +801,27 @@ bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <sp
 
         <section class="bld-try" id="prova">
           <h3>▶ Prova in console</h3>
-          <p>Apri la pagina col server attivo, premi <kbd>F2</kbd> e incolla nella console del browser:</p>
+          <p>Apri una pagina qualsiasi, premi <kbd>F12</kbd> e incolla nella console del browser questo codice, che
+            carica BeeLadybug dalla CDN:</p>
+          <div class="bld-code">
+            <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
+            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.5.4/src/index.js'</span>)
+  .<span class="f">then</span>(({ BeeLadybugCore, WebDOMAdapter, CSSAdapter }) =&gt; {
+    const bee = new <span class="f">BeeLadybugCore</span>();
+    new <span class="f">WebDOMAdapter</span>(bee, { root: document.body }).<span class="f">attach</span>();
+    new <span class="f">CSSAdapter</span>(bee).<span class="f">attach</span>();
+    window.bee = bee;
+  });</code></pre>
+          </div>
+          <p>Poi invia qualche pacchetto di prova:</p>
           <div class="bld-code">
             <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
             <pre><code>bee.<span class="f">sendData</span>(<span class="s">'log'</span>, { source: <span class="s">'human'</span>, message: <span class="s">'hello core'</span> })
 bee.<span class="f">sendData</span>(<span class="s">'fps'</span>, { value: <span class="s">61</span> })
 bee.<span class="f">sendData</span>(<span class="s">'error'</span>, { source: <span class="s">'ai'</span>, message: <span class="s">'timeout'</span> })</code></pre>
           </div>
-          <p style="margin:0">Poi premi <kbd>F4</kbd>: il clock fittizio si ferma, l'overlay no.</p>
+          <p style="margin:0">Premi <kbd>F2</kbd> per mostrare l'overlay, poi <kbd>F4</kbd>: il clock fittizio si ferma,
+            l'overlay no.</p>
         </section>
 
         <nav class="bld-pager" aria-label="Navigazione pagine">
