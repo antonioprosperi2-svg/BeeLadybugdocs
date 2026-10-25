@@ -10,22 +10,23 @@ Online: https://beeenginejs.com/ladybug/inizia/
 ## Struttura
 
 - `preview.html` — pagina Inizia (installazione, quick start, tasti)
-- `src/core/` — BeeLadybugCore, UIOverlay, AiAssistant
-- `src/adapters/` — Canvas, WebDOM, CSS, Ant, Spider
-- `src/python/` — PythonBridge
+- `concetti.html` — pagina Concetti (Core cieco, contratto `sendData`, clock)
+- `src/core/`, `src/adapters/`, `src/python/` — segnaposto dei moduli. I file HTML sono vuoti.
 
-Ogni file è un frammento da incollare in un blocco HTML personalizzato di WordPress.
+Ogni pagina pubblicata è un frammento da incollare in un blocco HTML personalizzato di WordPress.
+Le pagine dei moduli si scrivono solo dopo una revisione del codice di quel modulo.
 
 ## Anteprima locale
 
-Apri la cartella in VS Code e avvia **Go Live**, poi apri `preview.html`.
+Apri la cartella in VS Code e avvia **Go Live**, poi apri `preview.html` o `concetti.html`.
 
 ## Stato
 
 | Pagina | Stato |
 | --- | --- |
 | Inizia | pubblicata |
-| Core, Adapter, Python | in lavorazione |
+| Concetti | pronta in `concetti.html` |
+| moduli (Core, Adapter, Python) | non scritti |
 
 ## Licenza
 

@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Concetti: il Core cieco e il contratto sendData | Docs</title>
+  <!--
+  SEO suggerito (Yoast/RankMath):
+  Title: Concetti: il Core cieco e il contratto sendData | Docs
+  Meta description: Il Core di BeeLadybug riceve solo sendData. Tipi reali dal codice 0.5.4, campi del payload, wallTime, simTime e frame (F3 slow, F4 freeze).
+  Slug: /bee-ladybug/concetti/
+
+  VERSIONE ALL-IN-ONE: CSS e JS già inclusi, incolla tutto in un solo blocco HTML personalizzato.
+  Stesse classi della pagina Inizia (.bld-docs, .bld-code, .bld-copy, kbd, span.f / span.s).
+-->
+  <style>
+    /* BeeLadybug Docs — foglio condiviso. Tutto sotto .bld-docs */
+    .bld-docs {
+      --bg: #0b0b0d;
+      --panel: #141418;
+      --line: #26262c;
+      --red: #E63946;
+      --red2: #ff5c69;
+      --cyan: #22d3ee;
+      --amber: #f5a524;
+      --txt: #e8e8ec;
+      --mut: #9a9aa6;
+      background: var(--bg);
+      color: var(--txt);
+      font: 16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background-image: radial-gradient(rgba(255, 255, 255, .035) 1.5px, transparent 1.6px);
+      background-size: 22px 22px;
+      border-radius: 14px;
+      overflow: hidden
+    }
+
+    .bld-docs * {
+      box-sizing: border-box
+    }
+
+    .bld-docs a {
+      color: var(--red2);
+      text-decoration: none
+    }
+
+    .bld-docs a:hover {
+      text-decoration: underline
+    }
+
+    .bld-docs code {
+      font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+      font-size: .88em
+    }
+
+    .bld-docs :not(pre)>code {
+      background: #1d1d23;
+      color: var(--cyan);
+      padding: .1em .4em;
+      border-radius: 5px
+    }
+
+    .bld-docs .bld-nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      padding: 14px 32px;
+      background: rgba(11, 11, 13, .92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .bld-docs .bld-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--txt);
+      letter-spacing: .2px
+    }
+
+    .bld-docs .bld-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--red);
+      position: relative;
+      box-shadow: 0 0 14px rgba(230, 57, 70, .5)
+    }
+
+    .bld-docs .bld-dot:before,
+    .bld-docs .bld-dot:after {
+      content: "";
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: #000;
+      border-radius: 50%;
+      top: 6px;
+      left: 5px;
+      box-shadow: 7px 0 #000, 3px 6px #000
+    }
+
+    .bld-docs .bld-dot:after {
+      width: 1.5px;
+      height: 22px;
+      top: 0;
+      left: 10px;
+      border-radius: 0;
+      box-shadow: none
+    }
+
+    .bld-docs .bld-nav ul {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap
+    }
+
+    .bld-docs .bld-nav li a {
+      display: block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      color: var(--mut);
+      font-weight: 600;
+      font-size: 14px
+    }
+
+    .bld-docs .bld-nav li a:hover {
+      color: var(--txt);
+      background: #1b1b20;
+      text-decoration: none
+    }
+
+    .bld-docs .bld-nav li a.is-active {
+      color: #fff;
+      background: #C1121F;
+    }
+
+
+
+    .bld-docs .bld-ver {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--cyan);
+      border: 1px solid #164e5a;
+      padding: 3px 10px;
+      border-radius: 999px
+    }
+
+    .bld-docs .bld-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 48px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 32px 56px
+    }
+
+    .bld-docs .bld-hero {
+      padding: 8px 0 24px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 12px
+    }
+
+    .bld-docs .bld-eyebrow {
+      color: var(--red2);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase
+    }
+
+    .bld-docs h1 {
+      font-size: 44px;
+      line-height: 1.1;
+      margin: 10px 0 14px;
+      letter-spacing: -.8px
+    }
+
+    .bld-docs h1 span {
+      color: var(--red)
+    }
+
+    .bld-docs .bld-lead {
+      font-size: 19px;
+      color: #c9c9d2;
+      max-width: 680px;
+      margin: 0
+    }
+
+    .bld-docs blockquote {
+      margin: 20px 0 0;
+      padding: 12px 18px;
+      border-left: 3px solid var(--red);
+      background: #16161b;
+      color: var(--mut);
+      border-radius: 0 8px 8px 0;
+      font-style: italic
+    }
+
+    .bld-docs h2 {
+      font-size: 26px;
+      margin: 44px 0 12px;
+      scroll-margin-top: 80px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .bld-docs h2:before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 0 4px rgba(230, 57, 70, .15)
+    }
+
+    .bld-docs h3 {
+      font-size: 18px;
+      margin: 26px 0 8px;
+      color: #f2f2f5
+    }
+
+    .bld-docs p {
+      color: #cfcfd8
+    }
+
+    .bld-docs .bld-code {
+      position: relative;
+      margin: 14px 0 20px;
+      background: #08090b;
+      border: 1px solid #1c2a2f;
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    .bld-docs .bld-code-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 12px;
+      background: #0f1417;
+      border-bottom: 1px solid #1c2a2f;
+      font-size: 12px;
+      color: #6fb9c7;
+      font-family: ui-monospace, Menlo, monospace
+    }
+
+    .bld-docs .bld-copy {
+      background: transparent;
+      border: 1px solid #23414a;
+      color: var(--cyan);
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer
+    }
+
+    .bld-docs .bld-copy:hover {
+      background: #0f2a31
+    }
+
+    .bld-docs .bld-copy.ok {
+      border-color: var(--red);
+      color: var(--red2)
+    }
+
+    .bld-docs pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      color: #d6f6fb;
+      line-height: 1.55
+    }
+
+    .bld-docs .k {
+      color: var(--red2)
+    }
+
+    .bld-docs .s {
+      color: #a7f3d0
+    }
+
+    .bld-docs .c {
+      color: #5b6b72;
+      font-style: italic
+    }
+
+    .bld-docs .f {
+      color: var(--cyan)
+    }
+
+    .bld-docs table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 15px;
+      background: var(--panel);
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    .bld-docs th,
+    .bld-docs td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .bld-docs th {
+      background: #1a1a20;
+      color: var(--mut);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px
+    }
+
+    .bld-docs kbd {
+      display: inline-block;
+      min-width: 34px;
+      text-align: center;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: #1f1f25;
+      border: 1px solid #33333c;
+      border-bottom-width: 3px;
+      font: 600 13px ui-monospace, monospace;
+      color: #fff
+    }
+
+    .bld-docs .bld-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 16px 0
+    }
+
+    .bld-docs .bld-card {
+      display: block;
+      padding: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--txt);
+      transition: .15s
+    }
+
+    .bld-docs .bld-card:hover {
+      border-color: var(--red);
+      transform: translateY(-2px);
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(230, 57, 70, .12)
+    }
+
+    .bld-docs .bld-card b {
+      display: block;
+      font-size: 16px;
+      margin: 8px 0 4px
+    }
+
+    .bld-docs .bld-card small {
+      color: var(--mut);
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: block
+    }
+
+    .bld-docs .bld-ico {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: rgba(230, 57, 70, .12);
+      color: var(--red2);
+      font-size: 17px
+    }
+
+    .bld-docs .bld-badge {
+      display: inline-block;
+      font: 600 11px ui-monospace, monospace;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #0f2a31;
+      color: var(--cyan);
+      margin-right: 4px
+    }
+
+    .bld-docs .bld-badge.warn {
+      background: #2e2108;
+      color: var(--amber)
+    }
+
+    .bld-docs .bld-badge.err {
+      background: #2e0e12;
+      color: var(--red2)
+    }
+
+    .bld-docs .bld-try {
+      margin: 24px 0;
+      padding: 20px 22px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(34, 211, 238, .08), rgba(230, 57, 70, .08));
+      border: 1px solid #1f3a40
+    }
+
+    .bld-docs .bld-try h3 {
+      margin-top: 0;
+      color: var(--cyan)
+    }
+
+    .bld-docs .bld-note {
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: #1a1410;
+      border: 1px solid #3a2a12;
+      color: #e9c98c;
+      font-size: 14.5px
+    }
+
+    .bld-docs .bld-toc {
+      position: sticky;
+      top: 84px;
+      align-self: start;
+      font-size: 14px
+    }
+
+    .bld-docs .bld-toc p {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--mut);
+      margin: 0 0 10px;
+      font-weight: 700
+    }
+
+    .bld-docs .bld-toc ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-left: 1px solid var(--line)
+    }
+
+    .bld-docs .bld-toc a {
+      display: block;
+      padding: 5px 14px;
+      color: var(--mut);
+      margin-left: -1px;
+      border-left: 2px solid transparent
+    }
+
+    .bld-docs .bld-toc a:hover,
+    .bld-docs .bld-toc a.is-on {
+      color: var(--txt);
+      border-left-color: var(--red);
+      text-decoration: none
+    }
+
+    .bld-docs .bld-pager {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line)
+    }
+
+    .bld-docs .bld-pager a {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--txt)
+    }
+
+    .bld-docs .bld-pager a:hover {
+      border-color: var(--red);
+      text-decoration: none
+    }
+
+    .bld-docs .bld-pager small {
+      display: block;
+      color: var(--mut);
+      font-size: 12px
+    }
+
+    .bld-docs .bld-pager .next {
+      text-align: right;
+      grid-column: 2
+    }
+
+    .bld-docs .bld-pager .is-off {
+      opacity: .4;
+      pointer-events: none
+    }
+
+    @media(max-width:960px) {
+      .bld-docs .bld-wrap {
+        grid-template-columns: 1fr
+      }
+
+      .bld-docs .bld-toc {
+        display: none
+      }
+    }
+
+    @media(max-width:640px) {
+      .bld-docs .bld-nav {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 16px
+      }
+
+      .bld-docs .bld-nav ul {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        width: 100%
+      }
+
+      .bld-docs .bld-ver {
+        display: none
+      }
+
+      .bld-docs .bld-wrap {
+        padding: 28px 16px
+      }
+
+      .bld-docs h1 {
+        font-size: 32px
+      }
+
+      .bld-docs .bld-lead {
+        font-size: 17px
+      }
+
+      .bld-docs table {
+        font-size: 13.5px
+      }
+
+      .bld-docs th,
+      .bld-docs td {
+        padding: 8px
+      }
+
+      .bld-docs .bld-pager {
+        grid-template-columns: 1fr
+      }
+
+      .bld-docs .bld-pager .next {
+        grid-column: 1
+      }
+    }
+
+    /* ===== Mobile / WordPress hardening ===== */
+    .bld-docs {
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+      width: 100%;
+      overflow-x: hidden !important
+    }
+
+    .bld-docs *,
+    .bld-docs *:before,
+    .bld-docs *:after {
+      box-sizing: border-box !important;
+      max-width: 100%
+    }
+
+    .bld-docs .bld-wrap>*,
+    .bld-docs main,
+    .bld-docs .bld-card,
+    .bld-docs .bld-cards>*,
+    .bld-docs .bld-pager>*,
+    .bld-docs .bld-nav>* {
+      min-width: 0
+    }
+
+    .bld-docs .bld-code {
+      max-width: 100% !important;
+      min-width: 0
+    }
+
+    .bld-docs pre {
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100% !important;
+      white-space: pre !important;
+      word-wrap: normal !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      background: transparent !important;
+      border: 0 !important;
+      margin: 0 !important;
+      padding: 14px 16px !important;
+      font-size: 13.5px !important;
+      color: #d6f6fb !important
+    }
+
+    .bld-docs pre code {
+      white-space: pre !important;
+      background: transparent !important;
+      padding: 0 !important;
+      color: inherit !important;
+      word-break: normal !important;
+      overflow-wrap: normal !important;
+      display: block;
+      max-width: none
+    }
+
+    .bld-docs :not(pre)>code {
+      overflow-wrap: anywhere !important;
+      word-break: break-word !important;
+      white-space: normal !important
+    }
+
+    .bld-docs .bld-table {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100%;
+      margin: 14px 0
+    }
+
+    .bld-docs .bld-table table {
+      margin: 0;
+      min-width: 420px
+    }
+
+    .bld-docs p,
+    .bld-docs li,
+    .bld-docs h1,
+    .bld-docs h2,
+    .bld-docs h3 {
+      overflow-wrap: break-word
+    }
+
+    .bld-docs a.soon {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs .bld-table :not(pre)>code {
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      white-space: nowrap !important;
+    }
+  </style>
+  <div class="bld-docs">
+    <nav class="bld-nav" aria-label="Documentazione BeeLadybug">
+      <a class="bld-logo" href="#/bee-ladybug/inizia/"><span class="bld-dot"></span>BeeLadybug <span
+          style="color:var(--mut);font-weight:500">docs</span></a>
+      <ul>
+        <li><a href="#/bee-ladybug/inizia/">Inizia</a></li>
+        <li><a class="is-active" href="#/bee-ladybug/concetti/" aria-current="page">Concetti</a></li>
+        <li><a href="#/bee-ladybug/adapter/">Adapter</a></li>
+        <li><a href="#/bee-ladybug/api/">API</a></li>
+        <li><a href="#/bee-ladybug/risorse/">Risorse</a></li>
+      </ul>
+      <span class="bld-ver">v0.5.4</span>
+    </nav>
+
+    <div class="bld-wrap">
+      <main>
+        <header class="bld-hero">
+          <div class="bld-eyebrow">Concetti</div>
+          <h1>Il Core è <span>cieco</span>.</h1>
+          <p class="bld-lead">BeeLadybugCore non sa se davanti ha un Canvas, il DOM, un processo Python o una pipeline
+            AI. I file in <code>src/adapters/</code> sono moduli: traducono il loro mondo in pacchetti grezzi. Il Core
+            li timbra, li tiene in memoria e li mostra.</p>
+          <blockquote>Il Core non importa quei moduli. Riceve solo dati grezzi.</blockquote>
+        </header>
+
+        <h2 id="cieco">Due strati, un solo ingresso</h2>
+        <p><code>src/core/BeeLadybugCore.js</code> tiene il clock, i buffer e l'overlay. Quel modulo importa solo
+          <code>UIOverlay</code> e <code>AiAssistant</code>.</p>
+        <p>L'altro strato è <code>src/adapters/</code>: CanvasAdapter, WebDOMAdapter, CSSAdapter, AntAdapter,
+          SpiderAdapter e <code>python/PythonBridge.js</code>. <code>registerAdapter</code> salva un nome e le funzioni
+          <code>enable</code> / <code>disable</code>. Dentro il Core non c'è un import di questi moduli.</p>
+        <p>Tutto entra da <code>sendData(type, payload)</code>. Un numero o una stringa al posto dell'oggetto diventa
+          <code>{ value, message }</code>. Se <code>type</code> non è una stringa non vuota, <code>sendData</code>
+          ritorna <code>null</code> e non emette nulla.</p>
+
+        <h2 id="contratto">Contratto sendData</h2>
+        <p><code>WELL_KNOWN_TYPES</code> è la lista dei tipi che l'overlay tratta per primi. Una stringa fuori lista
+          viene comunque salvata in <code>getLatest</code> e inoltrata a <code>subscribe</code>: nel buffer di console
+          ci entra solo se il payload ha <code>level</code>. <code>log</code>, <code>warn</code>, <code>error</code> e
+          <code>debug</code> ci entrano sempre.</p>
+        <p>Il Core legge solo i campi qui sotto. Chiavi in più restano nel payload e non cambiano HUD né storico:
+          AntAdapter aggiunge <code>node</code> sui warn, SpiderAdapter aggiunge <code>attribution</code> sulla
+          telemetry.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Campi letti</th>
+                <th>Effetto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>fps</code></td>
+                <td><code>value</code> oppure <code>fps</code></td>
+                <td>HUD <code>fps</code> e storico <code>fps</code>. Se il numero non è finito, il pacchetto parte ma
+                  HUD e storico restano fermi.</td>
+              </tr>
+              <tr>
+                <td><code>metric</code></td>
+                <td><code>name</code> oppure <code>key</code> (default <code>metric</code>), <code>value</code>,
+                  <code>unit</code> opzionale</td>
+                <td>HUD sulla serie. Lo storico si aggiorna solo se <code>value</code> è un numero finito. Nel codice:
+                  <code>entities</code>, <code>hits</code>, <code>nodes</code>, <code>mutations</code>.</td>
+              </tr>
+              <tr>
+                <td><code>coord</code></td>
+                <td><code>label</code> oppure <code>name</code> (default <code>coord</code>), <code>x</code>,
+                  <code>y</code></td>
+                <td>HUD. Se <code>x</code> e <code>y</code> sono entrambi numeri, il valore è <code>x, y</code>.
+                  Altrimenti l'HUD mostra il payload intero.</td>
+              </tr>
+              <tr>
+                <td><code>log</code></td>
+                <td><code>message</code>, <code>source</code> opzionale, <code>level</code> opzionale</td>
+                <td>Console. Senza <code>level</code> il livello è <code>info</code>.</td>
+              </tr>
+              <tr>
+                <td><code>warn</code></td>
+                <td><code>message</code>, <code>source</code> opzionale, <code>level</code> opzionale</td>
+                <td>Console. Senza <code>level</code> il livello è <code>warn</code>.</td>
+              </tr>
+              <tr>
+                <td><code>error</code></td>
+                <td><code>message</code>, <code>source</code> opzionale, <code>level</code> opzionale</td>
+                <td>Console. Senza <code>level</code> il livello è <code>error</code>.</td>
+              </tr>
+              <tr>
+                <td><code>state</code></td>
+                <td><code>key</code> oppure <code>name</code> (default <code>state</code>), <code>value</code>,
+                  <code>unit</code> opzionale</td>
+                <td>HUD. Niente storico.</td>
+              </tr>
+              <tr>
+                <td><code>sys</code></td>
+                <td>dipende da <code>op</code>, tabella sotto</td>
+                <td>Lo emette il Core. Non entra in HUD né in console. Se lo mandi tu, viene salvato in
+                  <code>getLatest('sys')</code> e inoltrato ai subscriber, senza altri effetti.</td>
+              </tr>
+              <tr>
+                <td><code>clear</code></td>
+                <td><code>channel</code> oppure <code>type</code>: <code>logs</code>, <code>history</code>,
+                  <code>hud</code></td>
+                <td>Svuota quei buffer. Se il campo manca, svuota tutti e tre. Un valore diverso non svuota nulla. Il
+                  pacchetto restituito è <code>sys</code> con <code>op: 'clear'</code>. Non aggiorna
+                  <code>getLatest</code>.</td>
+              </tr>
+              <tr>
+                <td><code>telemetry</code></td>
+                <td><code>kind</code> oppure <code>name</code> (default <code>telemetry</code>), <code>duration</code>
+                  oppure <code>value</code></td>
+                <td>Solo storico, niente HUD. SpiderAdapter manda <code>kind: 'longtask'</code> e
+                  <code>duration</code>. Se <code>source</code> coincide col nome di un modulo registrato, l'overlay fa
+                  lampeggiare il suo pulsante (vale anche per <code>warn</code>).</td>
+              </tr>
+              <tr>
+                <td><code>debug</code></td>
+                <td><code>message</code>, <code>source</code> opzionale, <code>level</code> opzionale</td>
+                <td>Stesso percorso console di <code>log</code> (livello <code>info</code> se manca). Non è in
+                  <code>WELL_KNOWN_TYPES</code>. Nessun modulo in <code>src/</code> lo emette.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><code>source</code>, se è una stringa non vuota, viene copiato sul pacchetto. Altrimenti il pacchetto porta
+          <code>source: 'adapter'</code>. <code>level</code> parte da <code>payload.level</code> quando c'è; se manca,
+          valgono le regole della tabella e gli altri tipi restano <code>null</code>.</p>
+        <p>La riga in console mostra <code>payload.message</code>, poi <code>payload.value</code>, poi il nome del
+          tipo.</p>
+
+        <h3>Comandi sys</h3>
+        <p>I moduli non indovinano il tasto. Ascoltano <code>type: 'sys'</code> e leggono <code>payload.op</code>.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th><code>op</code></th>
+                <th>Campi</th>
+                <th>Quando</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>boot</code></td>
+                <td><code>version</code></td>
+                <td>Costruzione del Core</td>
+              </tr>
+              <tr>
+                <td><code>visibility</code></td>
+                <td><code>visible</code></td>
+                <td><code>show</code> / <code>hide</code></td>
+              </tr>
+              <tr>
+                <td><code>freeze</code></td>
+                <td><code>frozen</code></td>
+                <td><code>freeze</code> / <code>unfreeze</code>, anche <kbd>F4</kbd></td>
+              </tr>
+              <tr>
+                <td><code>timescale</code></td>
+                <td><code>scale</code></td>
+                <td><code>setTimeScale</code>, anche <kbd>F3</kbd></td>
+              </tr>
+              <tr>
+                <td><code>adapter</code></td>
+                <td><code>name</code>, <code>registered: true</code>, <code>label</code>, <code>hotkey</code>,
+                  <code>enabled</code></td>
+                <td><code>registerAdapter</code></td>
+              </tr>
+              <tr>
+                <td><code>adapter</code></td>
+                <td><code>name</code>, <code>registered: false</code></td>
+                <td><code>unregisterAdapter</code></td>
+              </tr>
+              <tr>
+                <td><code>adapter</code></td>
+                <td><code>name</code>, <code>enabled</code></td>
+                <td><code>setAdapterEnabled</code> / <code>toggleAdapter</code>. Qui non c'è
+                  <code>registered</code>.</td>
+              </tr>
+              <tr>
+                <td><code>clear</code></td>
+                <td><code>op</code> più i campi del payload originale</td>
+                <td><code>sendData('clear', …)</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bld-code">
+          <div class="bld-code-head">js<button class="bld-copy">Copia</button></div>
+          <pre><code>bee.<span class="f">subscribe</span>((packet) =&gt; {
+  <span class="k">if</span> (packet.type !== <span class="s">'sys'</span>) <span class="k">return</span>;
+  <span class="k">const</span> op = packet.payload.op;
+  <span class="k">if</span> (op === <span class="s">'freeze'</span>) console.<span class="f">log</span>(<span class="s">'frozen'</span>, packet.payload.frozen);
+  <span class="k">if</span> (op === <span class="s">'timescale'</span>) console.<span class="f">log</span>(<span class="s">'scale'</span>, packet.payload.scale);
+});</code></pre>
+        </div>
+        <p>CanvasAdapter e WebDOMAdapter fanno questo ascolto e copiano <code>frozen</code> e <code>timeScale</code> sul
+          proprio mondo. Il Core non li mette in pausa da solo.</p>
+
+        <h2 id="tempo">Tempo reale e tempo fittizio</h2>
+        <p>Ogni pacchetto, oltre a <code>id</code>, <code>type</code>, <code>payload</code>, <code>source</code> e
+          <code>level</code>, riceve tre marche di tempo.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Cos'è</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>wallTime</code></td>
+                <td><code>Date.now()</code>. Millisecondi dell'orologio reale. Il freeze non lo ferma.</td>
+              </tr>
+              <tr>
+                <td><code>simTime</code></td>
+                <td>Tempo fittizio, in millisecondi. A ogni tick del Core si somma il delta reale, tagliato tra 0 e 100
+                  ms, moltiplicato per <code>timeScale</code>. In overlay lo vedi come <code>mm:ss.s</code>; nel
+                  pacchetto resta il numero.</td>
+              </tr>
+              <tr>
+                <td><code>frame</code></td>
+                <td><code>frameCount</code> del Core. Parte da 0 e sale di 1 a ogni tick, finché non c'è il freeze. Non
+                  è il frame del Canvas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><kbd>F3</kbd> alterna <code>slowScale</code> (di default <code>0.25</code>) e <code>1</code>. Rallenta solo
+          <code>simTime</code>: <code>frame</code> continua a salire a ogni tick. Se il clock era fermo, <kbd>F3</kbd>
+          lo riavvia e poi applica la scala. Se <code>timeScale</code> non è già <code>0.25</code>, <kbd>F3</kbd> lo
+          porta a <code>0.25</code>: non ricorda un'altra scala impostata con <code>setTimeScale</code>.</p>
+        <p><code>setTimeScale(0)</code> ferma solo <code>simTime</code>. Il frame si ferma soltanto con il freeze.</p>
+        <p><kbd>F4</kbd> blocca <code>simTime</code> e <code>frame</code>. L'overlay no: il pannello si ridisegna.
+          I pacchetti nuovi portano un <code>wallTime</code> più alto, mentre <code>simTime</code> e <code>frame</code>
+          restano quelli dell'ultimo tick.</p>
+        <p class="bld-note"><kbd>F3</kbd> e <kbd>F4</kbd> usano <code>event.code</code> e partono solo con l'overlay
+          visibile. A overlay nascosto risponde solo <kbd>F2</kbd>. <code>bee.freeze()</code> e
+          <code>bee.setTimeScale()</code> non guardano la visibilità: sono i metodi. I tasti sono il collegamento
+          quando il pannello è aperto.</p>
+
+        <section class="bld-try" id="prova">
+          <h3>▶ Prova in console</h3>
+          <p>Apri una pagina qualsiasi, premi <kbd>F12</kbd> e incolla. Lo snippet carica il modulo
+            <code>bee-ladybug@0.5.4</code> dalla CDN, lascia correre il clock, poi congela e ristampa
+            <code>wallTime</code>, <code>simTime</code> e <code>frame</code>.</p>
+          <div class="bld-code">
+            <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
+            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.5.4/src/index.js'</span>)
+  .<span class="f">then</span>(<span class="k">async</span> ({ BeeLadybugCore }) =&gt; {
+    <span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>();
+    window.bee = bee;
+    <span class="k">const</span> wait = (ms) =&gt; <span class="k">new</span> <span class="f">Promise</span>((resolve) =&gt; <span class="f">setTimeout</span>(resolve, ms));
+
+    <span class="k">await</span> <span class="f">wait</span>(<span class="s">300</span>);
+    <span class="k">const</span> live = bee.<span class="f">sendData</span>(<span class="s">'log'</span>, { source: <span class="s">'console'</span>, message: <span class="s">'live'</span> });
+    bee.<span class="f">sendData</span>(<span class="s">'fps'</span>, { value: <span class="s">61</span>, source: <span class="s">'console'</span> });
+    bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <span class="s">'nodes'</span>, value: <span class="s">12</span>, source: <span class="s">'console'</span> });
+
+    bee.<span class="f">freeze</span>();
+    <span class="k">await</span> <span class="f">wait</span>(<span class="s">300</span>);
+    <span class="k">const</span> frozen = bee.<span class="f">sendData</span>(<span class="s">'log'</span>, { source: <span class="s">'console'</span>, message: <span class="s">'freeze'</span> });
+
+    console.<span class="f">log</span>(<span class="s">'live  '</span>, live.wallTime, live.simTime, live.frame);
+    console.<span class="f">log</span>(<span class="s">'freeze'</span>, frozen.wallTime, frozen.simTime, frozen.frame);
+    bee.<span class="f">unfreeze</span>();
+  });</code></pre>
+          </div>
+          <p style="margin:0">L'overlay parte visibile: <kbd>F2</kbd> lo nasconde. <kbd>F4</kbd>, col pannello aperto,
+            fa lo stesso di <code>bee.freeze()</code>. Nella stampa, <code>wallTime</code> cresce;
+            <code>simTime</code> e <code>frame</code> della seconda riga restano quelli della prima.</p>
+        </section>
+
+        <nav class="bld-pager" aria-label="Navigazione pagine">
+          <a href="#/bee-ladybug/inizia/"><small>Precedente</small>← Inizia</a>
+          <a class="next" href="#/bee-ladybug/adapter/canvas/"><small>Successivo</small>CanvasAdapter →</a>
+        </nav>
+      </main>
+
+      <aside class="bld-toc">
+        <p>In questa pagina</p>
+        <ul>
+          <li><a href="#cieco">Due strati</a></li>
+          <li><a href="#contratto">Contratto sendData</a></li>
+          <li><a href="#tempo">Tempo reale e fittizio</a></li>
+          <li><a href="#prova">Prova in console</a></li>
+        </ul>
+      </aside>
+    </div>
+    <script>
+      (function () {
+        var root = document.currentScript.closest('.bld-docs');
+        root.querySelectorAll('.bld-copy').forEach(function (b) {
+          b.addEventListener('click', function () {
+            var t = b.closest('.bld-code').querySelector('pre').innerText;
+            navigator.clipboard.writeText(t).then(function () {
+              b.textContent = 'Copiato ✓'; b.classList.add('ok');
+              setTimeout(function () { b.textContent = 'Copia'; b.classList.remove('ok') }, 1600)
+            });
+          });
+        });
+        var links = root.querySelectorAll('.bld-toc a');
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (es) {
+            es.forEach(function (e) {
+              if (e.isIntersecting) {
+                links.forEach(function (l) { l.classList.toggle('is-on', l.getAttribute('href') === '#' + e.target.id) })
+              }
+            })
+          }, { rootMargin: '-20% 0px -70% 0px' });
+          root.querySelectorAll('h2[id],section[id]').forEach(function (h) { io.observe(h) });
+        }
+      })();
+    </script>
+  </div>
+
+</html>
