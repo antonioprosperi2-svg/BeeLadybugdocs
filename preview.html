@@ -8,14 +8,10 @@
   <!--
   SEO suggerito (Yoast/RankMath):
   Title: Ladybug Debugger JS: installazione e quick start | Docs
-  Meta description: Installa il debugger overlay open source per Canvas, DOM, Python e AI: npm install, sendData, modalità headless e tasti rapidi F2-F6.
-  Slug: /bee-ladybug/inizia/
+  Meta description: Installa il debugger overlay open source per Canvas, DOM, Python e AI: npm install, sendData, modalità headless e tasti rapidi F2-F8.
+  Slug: /ladybug/inizia/
 
   VERSIONE ALL-IN-ONE: CSS e JS già inclusi, incolla tutto in un solo blocco HTML personalizzato.
-  (Versione modulare: inizia.html + beeladybug-docs.css)
-  Originale: Carica beeladybug-docs.css una sola volta
-  (Aspetto > Personalizza > CSS aggiuntivo, oppure wp_enqueue_style nel child theme).
-  Fallback: se non puoi, incolla il contenuto del file dentro <style>...</style> in cima a questo blocco.
 -->
   <style>
     /* BeeLadybug Docs — foglio condiviso. Tutto sotto .bld-docs */
@@ -675,11 +671,11 @@
       <ul>
         <li><a class="is-active" href="#/bee-ladybug/inizia/" aria-current="page">Inizia</a></li>
         <li><a href="#/bee-ladybug/concetti/">Concetti</a></li>
-        <li><a href="#/bee-ladybug/adapter/">Adapter</a></li>
-        <li><a href="#/bee-ladybug/api/">API</a></li>
-        <li><a href="#/bee-ladybug/risorse/">Risorse</a></li>
+        <li><a class="soon" href="#/bee-ladybug/adapter/">Adapter</a></li>
+        <li><a class="soon" href="#/bee-ladybug/api/">API</a></li>
+        <li><a class="soon" href="#/bee-ladybug/risorse/">Risorse</a></li>
       </ul>
-      <span class="bld-ver">v0.5.4</span>
+      <span class="bld-ver">v0.6.1</span>
     </nav>
 
     <div class="bld-wrap">
@@ -711,11 +707,13 @@
         <h3>2. Importa il Core</h3>
         <div class="bld-code">
           <div class="bld-code-head">app.js<button class="bld-copy">Copia</button></div>
-          <pre><code><span class="k">import</span> { BeeLadybugCore } <span class="k">from</span> <span class="s">'bee-ladybug'</span>;
+          <pre><code><span class="k">import</span> { BeeLadybugCore } <span class="k">from</span> <span class="s">'./node_modules/bee-ladybug/src/index.js'</span>;
 
 <span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>();
 bee.<span class="f">sendData</span>(<span class="s">'log'</span>, { message: <span class="s">'boot'</span>, source: <span class="s">'app'</span> });</code></pre>
         </div>
+        <p>Il percorso funziona con il server statico del passo 1, avviato dalla cartella dove hai fatto
+          <code>npm i</code>. Con un bundler (Vite, webpack, ecc.) basta <code>'bee-ladybug'</code>.</p>
         <h3>3. Invia pacchetti</h3>
         <p>Tutto passa da <code>sendData(type, payload)</code>. Ogni pacchetto riceve <code>wallTime</code>,
           <code>simTime</code> e <code>frame</code>.
@@ -737,6 +735,8 @@ bee.<span class="f">sendData</span>(<span class="s">'error'</span>,  { source: <
           <pre><code><span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>({ ui: <span class="k">false</span>, mount: <span class="k">false</span>, autoAttach: <span class="k">false</span> });
 bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <span class="s">'loss'</span>, value: <span class="s">0.12</span> });</code></pre>
         </div>
+        <p>In headless <code>bee.exportReport()</code> restituisce il report (<code>'html'</code>, <code>'json'</code> o
+          <code>'csv'</code>) e non scarica nessun file.</p>
 
         <h2 id="tasti">Tasti rapidi</h2>
         <div class="bld-table">
@@ -765,6 +765,11 @@ bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <sp
                 <td>CSS hunt, se <code>CSSAdapter</code> è attaccato</td>
               </tr>
               <tr>
+                <td><kbd>F8</kbd></td>
+                <td>Scarica un report HTML della telemetria, anche a overlay nascosto (da codice:
+                  <code>bee.exportReport()</code>)</td>
+              </tr>
+              <tr>
                 <td><kbd>P</kbd></td>
                 <td>Blocca il pannello CSS sull'elemento corrente (hunt attiva)</td>
               </tr>
@@ -775,39 +780,45 @@ bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <sp
             </tbody>
           </table>
         </div>
-        <p class="bld-note">Niente <code>F12</code> né tilde: sui layout italiani la tilde non è un tasto unico.
-          <kbd>F3</kbd>, <kbd>F4</kbd> e <kbd>F6</kbd> partono solo con l'overlay visibile: se l'hai chiuso, prima
-          <kbd>F2</kbd>.</p>
+        <p class="bld-note"><kbd>F12</kbd> non è un tasto di BeeLadybug: apre gli strumenti del browser. Niente tilde:
+          sui layout italiani la tilde non è un tasto unico. <kbd>F3</kbd>, <kbd>F4</kbd> e <kbd>F6</kbd> partono solo
+          con l'overlay visibile: se l'hai chiuso, prima <kbd>F2</kbd>. <kbd>F2</kbd> e <kbd>F8</kbd> rispondono
+          sempre.</p>
 
         <h2 id="adapter">Scegli un adapter</h2>
         <p>Gli adapter traducono un mondo specifico in <code>sendData()</code>. Il Core resta cieco.</p>
         <div class="bld-cards">
-          <a class="bld-card" href="#/bee-ladybug/adapter/canvas/"><span
+          <a class="bld-card soon" href="#/bee-ladybug/adapter/canvas/"><span
               class="bld-ico">▣</span><b>CanvasAdapter</b><small>Hitbox, collisioni, FPS e coordinate per giochi Canvas
               2D.</small></a>
-          <a class="bld-card" href="#/bee-ladybug/adapter/webdom/"><span
+          <a class="bld-card soon" href="#/bee-ladybug/adapter/webdom/"><span
               class="bld-ico">⌗</span><b>WebDOMAdapter</b><small>Box model, nodo sotto il puntatore, mutazioni del
               DOM.</small></a>
-          <a class="bld-card" href="#/bee-ladybug/adapter/css-hunt/"><span class="bld-ico">◎</span><b>CSS
+          <a class="bld-card soon" href="#/bee-ladybug/adapter/css-hunt/"><span class="bld-ico">◎</span><b>CSS
               hunt</b><small><code>!important</code>, overflow, stacking context e click intercettati.</small></a>
-          <a class="bld-card" href="#/bee-ladybug/adapter/ant/"><span
+          <a class="bld-card soon" href="#/bee-ladybug/adapter/ant/"><span
               class="bld-ico">⋰</span><b>AntAdapter</b><small><code>MutationObserver</code> sul DOM: avvisa quando un
               nodo supera la soglia di mutazioni al secondo.</small></a>
-          <a class="bld-card" href="#/bee-ladybug/adapter/spider/"><span
+          <a class="bld-card soon" href="#/bee-ladybug/adapter/spider/"><span
               class="bld-ico">✶</span><b>SpiderAdapter</b><small><code>PerformanceObserver</code>: segnala long task
               oltre 50&nbsp;ms e risorse lente.</small></a>
-          <a class="bld-card" href="#/bee-ladybug/adapter/python/"><span
+          <a class="bld-card soon" href="#/bee-ladybug/adapter/python/"><span
               class="bld-ico">⟩_</span><b>PythonBridge</b><small>Invia metriche da un processo Python
               all'overlay.</small></a>
         </div>
 
         <section class="bld-try" id="prova">
           <h3>▶ Prova in console</h3>
-          <p>Apri una pagina qualsiasi, premi <kbd>F12</kbd> e incolla nella console del browser questo codice, che
-            carica BeeLadybug dalla CDN:</p>
+          <p>Puoi provare BeeLadybug su una pagina vera, senza installare niente. Il codice qui sotto carica la versione
+            0.6.1 dalla CDN e la attiva sulla pagina.</p>
+          <p><strong>1.</strong> Apri il tuo sito. Alcuni siti bloccano gli script esterni: se il codice non parte, prova
+            su un altro sito.</p>
+          <p><strong>2.</strong> Premi <kbd>F12</kbd> e vai nella scheda <strong>Console</strong>.</p>
+          <p><strong>3.</strong> Incolla il codice e premi Invio. Se Chrome blocca l'incolla, scrivi
+            <code>allow pasting</code>, premi Invio e incolla di nuovo.</p>
           <div class="bld-code">
             <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
-            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.5.4/src/index.js'</span>)
+            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.1/src/index.js'</span>)
   .<span class="f">then</span>(({ BeeLadybugCore, WebDOMAdapter, CSSAdapter }) =&gt; {
     const bee = new <span class="f">BeeLadybugCore</span>();
     new <span class="f">WebDOMAdapter</span>(bee, { root: document.body }).<span class="f">attach</span>();
@@ -822,8 +833,9 @@ bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <sp
 bee.<span class="f">sendData</span>(<span class="s">'fps'</span>, { value: <span class="s">61</span> })
 bee.<span class="f">sendData</span>(<span class="s">'error'</span>, { source: <span class="s">'ai'</span>, message: <span class="s">'timeout'</span> })</code></pre>
           </div>
-          <p style="margin:0">Premi <kbd>F2</kbd> per mostrare l'overlay, poi <kbd>F4</kbd>: il clock fittizio si ferma,
-            l'overlay no.</p>
+          <p style="margin:0">L'overlay compare subito. Tasti: <kbd>F2</kbd> mostra o nasconde l'overlay,
+            <kbd>F3</kbd> rallenta il tempo (slow), <kbd>F4</kbd> lo ferma (freeze: il clock fittizio si ferma,
+            l'overlay no), <kbd>F6</kbd> attiva la CSS hunt, <kbd>F8</kbd> scarica il report.</p>
         </section>
 
         <nav class="bld-pager" aria-label="Navigazione pagine">

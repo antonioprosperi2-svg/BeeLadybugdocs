@@ -8,8 +8,8 @@
   <!--
   SEO suggerito (Yoast/RankMath):
   Title: Concetti: il Core cieco e il contratto sendData | Docs
-  Meta description: Il Core di BeeLadybug riceve solo sendData. Tipi reali dal codice 0.5.4, campi del payload, wallTime, simTime e frame (F3 slow, F4 freeze).
-  Slug: /bee-ladybug/concetti/
+  Meta description: Il Core di BeeLadybug riceve solo sendData. Tipi reali dal codice 0.6.1, campi del payload, wallTime, simTime e frame (F3 slow, F4 freeze).
+  Slug: /ladybug/concetti/
 
   VERSIONE ALL-IN-ONE: CSS e JS già inclusi, incolla tutto in un solo blocco HTML personalizzato.
   Stesse classi della pagina Inizia (.bld-docs, .bld-code, .bld-copy, kbd, span.f / span.s).
@@ -678,11 +678,11 @@
       <ul>
         <li><a href="#/bee-ladybug/inizia/">Inizia</a></li>
         <li><a class="is-active" href="#/bee-ladybug/concetti/" aria-current="page">Concetti</a></li>
-        <li><a href="#/bee-ladybug/adapter/">Adapter</a></li>
-        <li><a href="#/bee-ladybug/api/">API</a></li>
-        <li><a href="#/bee-ladybug/risorse/">Risorse</a></li>
+        <li><a class="soon" href="#/bee-ladybug/adapter/">Adapter</a></li>
+        <li><a class="soon" href="#/bee-ladybug/api/">API</a></li>
+        <li><a class="soon" href="#/bee-ladybug/risorse/">Risorse</a></li>
       </ul>
-      <span class="bld-ver">v0.5.4</span>
+      <span class="bld-ver">v0.6.1</span>
     </nav>
 
     <div class="bld-wrap">
@@ -698,7 +698,7 @@
 
         <h2 id="cieco">Due strati, un solo ingresso</h2>
         <p><code>src/core/BeeLadybugCore.js</code> tiene il clock, i buffer e l'overlay. Quel modulo importa solo
-          <code>UIOverlay</code> e <code>AiAssistant</code>.</p>
+          <code>UIOverlay</code>, <code>AiAssistant</code> e <code>ReportExporter</code>.</p>
         <p>L'altro strato è <code>src/adapters/</code>: CanvasAdapter, WebDOMAdapter, CSSAdapter, AntAdapter,
           SpiderAdapter e <code>python/PythonBridge.js</code>. <code>registerAdapter</code> salva un nome e le funzioni
           <code>enable</code> / <code>disable</code>. Dentro il Core non c'è un import di questi moduli.</p>
@@ -910,18 +910,20 @@
           I pacchetti nuovi portano un <code>wallTime</code> più alto, mentre <code>simTime</code> e <code>frame</code>
           restano quelli dell'ultimo tick.</p>
         <p class="bld-note"><kbd>F3</kbd> e <kbd>F4</kbd> usano <code>event.code</code> e partono solo con l'overlay
-          visibile. A overlay nascosto risponde solo <kbd>F2</kbd>. <code>bee.freeze()</code> e
+          visibile. A overlay nascosto rispondono solo <kbd>F2</kbd> e <kbd>F8</kbd> (<kbd>F8</kbd> scarica il report,
+          come <code>bee.exportReport()</code>). <code>bee.freeze()</code> e
           <code>bee.setTimeScale()</code> non guardano la visibilità: sono i metodi. I tasti sono il collegamento
           quando il pannello è aperto.</p>
 
         <section class="bld-try" id="prova">
           <h3>▶ Prova in console</h3>
-          <p>Apri una pagina qualsiasi, premi <kbd>F12</kbd> e incolla. Lo snippet carica il modulo
-            <code>bee-ladybug@0.5.4</code> dalla CDN, lascia correre il clock, poi congela e ristampa
+          <p>Apri una pagina qualsiasi, premi <kbd>F12</kbd> e incolla (se Chrome blocca l'incolla,
+            scrivi <code>allow pasting</code> e riprova). Lo snippet carica il modulo
+            <code>bee-ladybug@0.6.1</code> dalla CDN, lascia correre il clock, poi congela e ristampa
             <code>wallTime</code>, <code>simTime</code> e <code>frame</code>.</p>
           <div class="bld-code">
             <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
-            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.5.4/src/index.js'</span>)
+            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.1/src/index.js'</span>)
   .<span class="f">then</span>(<span class="k">async</span> ({ BeeLadybugCore }) =&gt; {
     <span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>();
     window.bee = bee;
@@ -948,7 +950,7 @@
 
         <nav class="bld-pager" aria-label="Navigazione pagine">
           <a href="#/bee-ladybug/inizia/"><small>Precedente</small>← Inizia</a>
-          <a class="next" href="#/bee-ladybug/adapter/canvas/"><small>Successivo</small>CanvasAdapter →</a>
+          <a class="next soon" href="#/bee-ladybug/adapter/canvas/"><small>Successivo</small>CanvasAdapter →</a>
         </nav>
       </main>
 
