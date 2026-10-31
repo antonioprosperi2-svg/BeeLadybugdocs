@@ -671,11 +671,11 @@
       <ul>
         <li><a class="is-active" href="#/bee-ladybug/inizia/" aria-current="page">Inizia</a></li>
         <li><a href="#/bee-ladybug/concetti/">Concetti</a></li>
-        <li><a class="soon" href="#/bee-ladybug/adapter/">Adapter</a></li>
-        <li><a class="soon" href="#/bee-ladybug/api/">API</a></li>
-        <li><a class="soon" href="#/bee-ladybug/risorse/">Risorse</a></li>
+        <li><a href="#/bee-ladybug/adapter/">Adapter</a></li>
+        <li><a href="#/bee-ladybug/api/">API</a></li>
+        <li><a href="#/bee-ladybug/risorse/">Risorse</a></li>
       </ul>
-      <span class="bld-ver">v0.6.1</span>
+      <span class="bld-ver">v0.6.2</span>
     </nav>
 
     <div class="bld-wrap">
@@ -788,21 +788,21 @@ bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <sp
         <h2 id="adapter">Scegli un adapter</h2>
         <p>Gli adapter traducono un mondo specifico in <code>sendData()</code>. Il Core resta cieco.</p>
         <div class="bld-cards">
-          <a class="bld-card soon" href="#/bee-ladybug/adapter/canvas/"><span
+          <a class="bld-card" href="#/bee-ladybug/adapter/canvas/"><span
               class="bld-ico">▣</span><b>CanvasAdapter</b><small>Hitbox, collisioni, FPS e coordinate per giochi Canvas
               2D.</small></a>
-          <a class="bld-card soon" href="#/bee-ladybug/adapter/webdom/"><span
+          <a class="bld-card" href="#/bee-ladybug/adapter/webdom/"><span
               class="bld-ico">⌗</span><b>WebDOMAdapter</b><small>Box model, nodo sotto il puntatore, mutazioni del
               DOM.</small></a>
-          <a class="bld-card soon" href="#/bee-ladybug/adapter/css-hunt/"><span class="bld-ico">◎</span><b>CSS
+          <a class="bld-card" href="#/bee-ladybug/adapter/css-hunt/"><span class="bld-ico">◎</span><b>CSS
               hunt</b><small><code>!important</code>, overflow, stacking context e click intercettati.</small></a>
-          <a class="bld-card soon" href="#/bee-ladybug/adapter/ant/"><span
+          <a class="bld-card" href="#/bee-ladybug/adapter/ant/"><span
               class="bld-ico">⋰</span><b>AntAdapter</b><small><code>MutationObserver</code> sul DOM: avvisa quando un
               nodo supera la soglia di mutazioni al secondo.</small></a>
-          <a class="bld-card soon" href="#/bee-ladybug/adapter/spider/"><span
+          <a class="bld-card" href="#/bee-ladybug/adapter/spider/"><span
               class="bld-ico">✶</span><b>SpiderAdapter</b><small><code>PerformanceObserver</code>: segnala long task
               oltre 50&nbsp;ms e risorse lente.</small></a>
-          <a class="bld-card soon" href="#/bee-ladybug/adapter/python/"><span
+          <a class="bld-card" href="#/bee-ladybug/adapter/python/"><span
               class="bld-ico">⟩_</span><b>PythonBridge</b><small>Invia metriche da un processo Python
               all'overlay.</small></a>
         </div>
@@ -810,7 +810,7 @@ bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <sp
         <section class="bld-try" id="prova">
           <h3>▶ Prova in console</h3>
           <p>Puoi provare BeeLadybug su una pagina vera, senza installare niente. Il codice qui sotto carica la versione
-            0.6.1 dalla CDN e la attiva sulla pagina.</p>
+            0.6.2 dalla CDN e la attiva sulla pagina.</p>
           <p><strong>1.</strong> Apri il tuo sito. Alcuni siti bloccano gli script esterni: se il codice non parte, prova
             su un altro sito.</p>
           <p><strong>2.</strong> Premi <kbd>F12</kbd> e vai nella scheda <strong>Console</strong>.</p>
@@ -818,7 +818,7 @@ bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <sp
             <code>allow pasting</code>, premi Invio e incolla di nuovo.</p>
           <div class="bld-code">
             <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
-            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.1/src/index.js'</span>)
+            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.2/src/index.js'</span>)
   .<span class="f">then</span>(({ BeeLadybugCore, WebDOMAdapter, CSSAdapter }) =&gt; {
     const bee = new <span class="f">BeeLadybugCore</span>();
     new <span class="f">WebDOMAdapter</span>(bee, { root: document.body }).<span class="f">attach</span>();

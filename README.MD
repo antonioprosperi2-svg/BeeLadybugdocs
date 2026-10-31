@@ -11,14 +11,17 @@ Online: https://beeenginejs.com/ladybug/inizia/
 
 - `preview.html` — pagina Inizia (installazione, quick start, tasti)
 - `concetti.html` — pagina Concetti (Core cieco, contratto `sendData`, clock)
-- `src/core/`, `src/adapters/`, `src/python/` — segnaposto dei moduli. I file HTML sono vuoti.
+- `src/adapters/CanvasAdapter.html` — pagina CanvasAdapter (entità, opzioni, pacchetti, overlay, autoPump, metodi, report)
+- `src/core/`, `src/adapters/`, `src/python/` — pagine dei moduli. Gli altri file HTML sono ancora vuoti.
+  Nel pacchetto npm il modulo Python sta in `src/adapters/python/PythonBridge.js`; qui `src/python/` è solo il segnaposto della sua pagina.
 
 Ogni pagina pubblicata è un frammento da incollare in un blocco HTML personalizzato di WordPress.
 Le pagine dei moduli si scrivono solo dopo una revisione del codice di quel modulo.
+La documentazione segue la versione `0.6.2` di `bee-ladybug` (badge in alto e URL CDN negli snippet).
 
 ## Anteprima locale
 
-Apri la cartella in VS Code e avvia **Go Live**, poi apri `preview.html` o `concetti.html`.
+Apri la cartella in VS Code e avvia **Go Live**, poi apri `preview.html`, `concetti.html` o `src/adapters/CanvasAdapter.html`.
 
 ## Stato
 
@@ -26,7 +29,8 @@ Apri la cartella in VS Code e avvia **Go Live**, poi apri `preview.html` o `conc
 | --- | --- |
 | Inizia | pubblicata |
 | Concetti | pronta in `concetti.html` |
-| moduli (Core, Adapter, Python) | non scritti |
+| CanvasAdapter | pronta in `src/adapters/CanvasAdapter.html` |
+| altri moduli (Core, WebDOM, CSS, Ant, Spider, Python) | non scritti |
 
 ## Licenza
 

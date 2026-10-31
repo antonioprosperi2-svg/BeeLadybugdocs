@@ -1,0 +1,1158 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CanvasAdapter: hitbox e collisioni per Canvas 2D | Docs</title>
+  <!--
+  SEO suggerito (Yoast/RankMath):
+  Title: CanvasAdapter: hitbox e collisioni per Canvas 2D | Docs
+  Meta description: CanvasAdapter di BeeLadybug 0.6.2: legge le entità del tuo gioco Canvas 2D, calcola le collisioni, misura gli FPS e disegna gli hitbox su un overlay. Opzioni, pacchetti e autoPump.
+  Slug: /ladybug/adapter/canvas/
+
+  VERSIONE ALL-IN-ONE: CSS e JS già inclusi, incolla tutto in un solo blocco HTML personalizzato.
+  Stesse classi della pagina Inizia (.bld-docs, .bld-code, .bld-copy, kbd, span.f / span.s).
+-->
+  <style>
+    /* BeeLadybug Docs — foglio condiviso. Tutto sotto .bld-docs */
+    .bld-docs {
+      --bg: #0b0b0d;
+      --panel: #141418;
+      --line: #26262c;
+      --red: #E63946;
+      --red2: #ff5c69;
+      --cyan: #22d3ee;
+      --amber: #f5a524;
+      --txt: #e8e8ec;
+      --mut: #9a9aa6;
+      background: var(--bg);
+      color: var(--txt);
+      font: 16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background-image: radial-gradient(rgba(255, 255, 255, .035) 1.5px, transparent 1.6px);
+      background-size: 22px 22px;
+      border-radius: 14px;
+      overflow: hidden
+    }
+
+    .bld-docs * {
+      box-sizing: border-box
+    }
+
+    .bld-docs a {
+      color: var(--red2);
+      text-decoration: none
+    }
+
+    .bld-docs a:hover {
+      text-decoration: underline
+    }
+
+    .bld-docs code {
+      font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+      font-size: .88em
+    }
+
+    .bld-docs :not(pre)>code {
+      background: #1d1d23;
+      color: var(--cyan);
+      padding: .1em .4em;
+      border-radius: 5px
+    }
+
+    .bld-docs .bld-nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      padding: 14px 32px;
+      background: rgba(11, 11, 13, .92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .bld-docs .bld-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--txt);
+      letter-spacing: .2px
+    }
+
+    .bld-docs .bld-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--red);
+      position: relative;
+      box-shadow: 0 0 14px rgba(230, 57, 70, .5)
+    }
+
+    .bld-docs .bld-dot:before,
+    .bld-docs .bld-dot:after {
+      content: "";
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: #000;
+      border-radius: 50%;
+      top: 6px;
+      left: 5px;
+      box-shadow: 7px 0 #000, 3px 6px #000
+    }
+
+    .bld-docs .bld-dot:after {
+      width: 1.5px;
+      height: 22px;
+      top: 0;
+      left: 10px;
+      border-radius: 0;
+      box-shadow: none
+    }
+
+    .bld-docs .bld-nav ul {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap
+    }
+
+    .bld-docs .bld-nav li a {
+      display: block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      color: var(--mut);
+      font-weight: 600;
+      font-size: 14px
+    }
+
+    .bld-docs .bld-nav li a:hover {
+      color: var(--txt);
+      background: #1b1b20;
+      text-decoration: none
+    }
+
+    .bld-docs .bld-nav li a.is-active {
+      color: #fff;
+      background: #C1121F;
+    }
+
+
+
+    .bld-docs .bld-ver {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--cyan);
+      border: 1px solid #164e5a;
+      padding: 3px 10px;
+      border-radius: 999px
+    }
+
+    .bld-docs .bld-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 48px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 32px 56px
+    }
+
+    .bld-docs .bld-hero {
+      padding: 8px 0 24px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 12px
+    }
+
+    .bld-docs .bld-eyebrow {
+      color: var(--red2);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase
+    }
+
+    .bld-docs h1 {
+      font-size: 44px;
+      line-height: 1.1;
+      margin: 10px 0 14px;
+      letter-spacing: -.8px
+    }
+
+    .bld-docs h1 span {
+      color: var(--red)
+    }
+
+    .bld-docs .bld-lead {
+      font-size: 19px;
+      color: #c9c9d2;
+      max-width: 680px;
+      margin: 0
+    }
+
+    .bld-docs blockquote {
+      margin: 20px 0 0;
+      padding: 12px 18px;
+      border-left: 3px solid var(--red);
+      background: #16161b;
+      color: var(--mut);
+      border-radius: 0 8px 8px 0;
+      font-style: italic
+    }
+
+    .bld-docs h2 {
+      font-size: 26px;
+      margin: 44px 0 12px;
+      scroll-margin-top: 80px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .bld-docs h2:before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 0 4px rgba(230, 57, 70, .15)
+    }
+
+    .bld-docs h3 {
+      font-size: 18px;
+      margin: 26px 0 8px;
+      color: #f2f2f5
+    }
+
+    .bld-docs p {
+      color: #cfcfd8
+    }
+
+    .bld-docs .bld-code {
+      position: relative;
+      margin: 14px 0 20px;
+      background: #08090b;
+      border: 1px solid #1c2a2f;
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    .bld-docs .bld-code-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 12px;
+      background: #0f1417;
+      border-bottom: 1px solid #1c2a2f;
+      font-size: 12px;
+      color: #6fb9c7;
+      font-family: ui-monospace, Menlo, monospace
+    }
+
+    .bld-docs .bld-copy {
+      background: transparent;
+      border: 1px solid #23414a;
+      color: var(--cyan);
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer
+    }
+
+    .bld-docs .bld-copy:hover {
+      background: #0f2a31
+    }
+
+    .bld-docs .bld-copy.ok {
+      border-color: var(--red);
+      color: var(--red2)
+    }
+
+    .bld-docs pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      color: #d6f6fb;
+      line-height: 1.55
+    }
+
+    .bld-docs .k {
+      color: var(--red2)
+    }
+
+    .bld-docs .s {
+      color: #a7f3d0
+    }
+
+    .bld-docs .c {
+      color: #5b6b72;
+      font-style: italic
+    }
+
+    .bld-docs .f {
+      color: var(--cyan)
+    }
+
+    .bld-docs table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 15px;
+      background: var(--panel);
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    .bld-docs th,
+    .bld-docs td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .bld-docs th {
+      background: #1a1a20;
+      color: var(--mut);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px
+    }
+
+    .bld-docs kbd {
+      display: inline-block;
+      min-width: 34px;
+      text-align: center;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: #1f1f25;
+      border: 1px solid #33333c;
+      border-bottom-width: 3px;
+      font: 600 13px ui-monospace, monospace;
+      color: #fff
+    }
+
+    .bld-docs .bld-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 16px 0
+    }
+
+    .bld-docs .bld-card {
+      display: block;
+      padding: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--txt);
+      transition: .15s
+    }
+
+    .bld-docs .bld-card:hover {
+      border-color: var(--red);
+      transform: translateY(-2px);
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(230, 57, 70, .12)
+    }
+
+    .bld-docs .bld-card b {
+      display: block;
+      font-size: 16px;
+      margin: 8px 0 4px
+    }
+
+    .bld-docs .bld-card small {
+      color: var(--mut);
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: block
+    }
+
+    .bld-docs .bld-ico {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: rgba(230, 57, 70, .12);
+      color: var(--red2);
+      font-size: 17px
+    }
+
+    .bld-docs .bld-badge {
+      display: inline-block;
+      font: 600 11px ui-monospace, monospace;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #0f2a31;
+      color: var(--cyan);
+      margin-right: 4px
+    }
+
+    .bld-docs .bld-badge.warn {
+      background: #2e2108;
+      color: var(--amber)
+    }
+
+    .bld-docs .bld-badge.err {
+      background: #2e0e12;
+      color: var(--red2)
+    }
+
+    .bld-docs .bld-try {
+      margin: 24px 0;
+      padding: 20px 22px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(34, 211, 238, .08), rgba(230, 57, 70, .08));
+      border: 1px solid #1f3a40
+    }
+
+    .bld-docs .bld-try h3 {
+      margin-top: 0;
+      color: var(--cyan)
+    }
+
+    .bld-docs .bld-note {
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: #1a1410;
+      border: 1px solid #3a2a12;
+      color: #e9c98c;
+      font-size: 14.5px
+    }
+
+    .bld-docs .bld-toc {
+      position: sticky;
+      top: 84px;
+      align-self: start;
+      font-size: 14px
+    }
+
+    .bld-docs .bld-toc p {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--mut);
+      margin: 0 0 10px;
+      font-weight: 700
+    }
+
+    .bld-docs .bld-toc ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-left: 1px solid var(--line)
+    }
+
+    .bld-docs .bld-toc a {
+      display: block;
+      padding: 5px 14px;
+      color: var(--mut);
+      margin-left: -1px;
+      border-left: 2px solid transparent
+    }
+
+    .bld-docs .bld-toc a:hover,
+    .bld-docs .bld-toc a.is-on {
+      color: var(--txt);
+      border-left-color: var(--red);
+      text-decoration: none
+    }
+
+    .bld-docs .bld-pager {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line)
+    }
+
+    .bld-docs .bld-pager a {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--txt)
+    }
+
+    .bld-docs .bld-pager a:hover {
+      border-color: var(--red);
+      text-decoration: none
+    }
+
+    .bld-docs .bld-pager small {
+      display: block;
+      color: var(--mut);
+      font-size: 12px
+    }
+
+    .bld-docs .bld-pager .next {
+      text-align: right;
+      grid-column: 2
+    }
+
+    .bld-docs .bld-pager .is-off {
+      opacity: .4;
+      pointer-events: none
+    }
+
+    @media(max-width:960px) {
+      .bld-docs .bld-wrap {
+        grid-template-columns: 1fr
+      }
+
+      .bld-docs .bld-toc {
+        display: none
+      }
+    }
+
+    @media(max-width:640px) {
+      .bld-docs .bld-nav {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 16px
+      }
+
+      .bld-docs .bld-nav ul {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        width: 100%
+      }
+
+      .bld-docs .bld-ver {
+        display: none
+      }
+
+      .bld-docs .bld-wrap {
+        padding: 28px 16px
+      }
+
+      .bld-docs h1 {
+        font-size: 32px
+      }
+
+      .bld-docs .bld-lead {
+        font-size: 17px
+      }
+
+      .bld-docs table {
+        font-size: 13.5px
+      }
+
+      .bld-docs th,
+      .bld-docs td {
+        padding: 8px
+      }
+
+      .bld-docs .bld-pager {
+        grid-template-columns: 1fr
+      }
+
+      .bld-docs .bld-pager .next {
+        grid-column: 1
+      }
+    }
+
+    /* ===== Mobile / WordPress hardening ===== */
+    .bld-docs {
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+      width: 100%;
+      overflow-x: hidden !important
+    }
+
+    .bld-docs *,
+    .bld-docs *:before,
+    .bld-docs *:after {
+      box-sizing: border-box !important;
+      max-width: 100%
+    }
+
+    .bld-docs .bld-wrap>*,
+    .bld-docs main,
+    .bld-docs .bld-card,
+    .bld-docs .bld-cards>*,
+    .bld-docs .bld-pager>*,
+    .bld-docs .bld-nav>* {
+      min-width: 0
+    }
+
+    .bld-docs .bld-code {
+      max-width: 100% !important;
+      min-width: 0
+    }
+
+    .bld-docs pre {
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100% !important;
+      white-space: pre !important;
+      word-wrap: normal !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      background: transparent !important;
+      border: 0 !important;
+      margin: 0 !important;
+      padding: 14px 16px !important;
+      font-size: 13.5px !important;
+      color: #d6f6fb !important
+    }
+
+    .bld-docs pre code {
+      white-space: pre !important;
+      background: transparent !important;
+      padding: 0 !important;
+      color: inherit !important;
+      word-break: normal !important;
+      overflow-wrap: normal !important;
+      display: block;
+      max-width: none
+    }
+
+    .bld-docs :not(pre)>code {
+      overflow-wrap: anywhere !important;
+      word-break: break-word !important;
+      white-space: normal !important
+    }
+
+    .bld-docs .bld-table {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100%;
+      margin: 14px 0
+    }
+
+    .bld-docs .bld-table table {
+      margin: 0;
+      min-width: 420px
+    }
+
+    .bld-docs p,
+    .bld-docs li,
+    .bld-docs h1,
+    .bld-docs h2,
+    .bld-docs h3 {
+      overflow-wrap: break-word
+    }
+
+    .bld-docs a.soon {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs .bld-table :not(pre)>code {
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      white-space: nowrap !important;
+    }
+  </style>
+  <div class="bld-docs">
+    <nav class="bld-nav" aria-label="Documentazione BeeLadybug">
+      <a class="bld-logo" href="#/bee-ladybug/inizia/"><span class="bld-dot"></span>BeeLadybug <span
+          style="color:var(--mut);font-weight:500">docs</span></a>
+      <ul>
+        <li><a href="#/bee-ladybug/inizia/">Inizia</a></li>
+        <li><a href="#/bee-ladybug/concetti/">Concetti</a></li>
+        <li><a class="is-active" href="#/bee-ladybug/adapter/" aria-current="page">Adapter</a></li>
+        <li><a href="#/bee-ladybug/api/">API</a></li>
+        <li><a href="#/bee-ladybug/risorse/">Risorse</a></li>
+      </ul>
+      <span class="bld-ver">v0.6.2</span>
+    </nav>
+
+    <div class="bld-wrap">
+      <main>
+        <header class="bld-hero">
+          <div class="bld-eyebrow">Adapter</div>
+          <h1>Canvas<span>Adapter</span></h1>
+          <p class="bld-lead">Traduce un gioco Canvas 2D in pacchetti per il Core. Legge una lista di rettangoli, calcola
+            le collisioni, misura gli FPS del gioco e disegna gli hitbox su un canvas sovrapposto: i pixel del gioco non
+            si toccano.</p>
+          <blockquote>Il gioco non parla mai con l'overlay. Aggiorna le entità e chiama <code>pump()</code>.</blockquote>
+        </header>
+
+        <h2 id="uso">Uso base</h2>
+        <p>Serve un <code>BeeLadybugCore</code>, il canvas del gioco e la lista delle entità. Dopo
+          <code>attach()</code>, chiama <code>pump()</code> una volta per frame, a posizioni già aggiornate.</p>
+        <div class="bld-code">
+          <div class="bld-code-head">game.js<button class="bld-copy">Copia</button></div>
+          <pre><code><span class="k">import</span> { BeeLadybugCore, CanvasAdapter } <span class="k">from</span> <span class="s">'bee-ladybug'</span>;
+
+<span class="k">const</span> canvas = document.<span class="f">getElementById</span>(<span class="s">'game'</span>);
+<span class="k">const</span> player = { name: <span class="s">'player'</span>, x: <span class="s">40</span>, y: <span class="s">40</span>, width: <span class="s">32</span>, height: <span class="s">32</span> };
+<span class="k">const</span> wall   = { name: <span class="s">'wall'</span>,   x: <span class="s">120</span>, y: <span class="s">30</span>, width: <span class="s">60</span>, height: <span class="s">80</span> };
+
+<span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>();
+<span class="k">const</span> adapter = <span class="k">new</span> <span class="f">CanvasAdapter</span>(bee, { canvas, entities: [player, wall] });
+adapter.<span class="f">attach</span>();
+
+<span class="k">function</span> <span class="f">loop</span>() {
+  <span class="f">requestAnimationFrame</span>(loop);
+  <span class="f">update</span>();        <span class="c">// muovi le entità</span>
+  <span class="f">draw</span>();          <span class="c">// disegna il gioco</span>
+  adapter.<span class="f">pump</span>();  <span class="c">// una volta per frame, alla fine</span>
+}
+<span class="f">requestAnimationFrame</span>(loop);</code></pre>
+        </div>
+        <p>L'adapter tiene la lista per riferimento: se modifichi gli oggetti, li rilegge a ogni <code>pump()</code>. Per
+          sostituire l'intera lista usa <code>setEntities()</code>. Senza bundler, nell'import usa il percorso
+          <code>./node_modules/bee-ladybug/src/index.js</code>, come in <a href="#/bee-ladybug/inizia/">Inizia</a>.</p>
+
+        <h2 id="entita">Le entità</h2>
+        <p>Ogni entità è un rettangolo allineato agli assi (AABB), in pixel del canvas, cioè in unità degli attributi
+          <code>width</code> e <code>height</code> e non della grandezza CSS. I campi in più vengono ignorati.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Significato</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>x</code> / <code>worldX</code></td>
+                <td>Posizione orizzontale. Se ci sono tutti e due, vince <code>worldX</code>.</td>
+              </tr>
+              <tr>
+                <td><code>y</code> / <code>worldY</code></td>
+                <td>Posizione verticale. Se ci sono tutti e due, vince <code>worldY</code>.</td>
+              </tr>
+              <tr>
+                <td><code>width</code> / <code>w</code></td>
+                <td>Larghezza. Se ci sono tutti e due, vince <code>width</code>.</td>
+              </tr>
+              <tr>
+                <td><code>height</code> / <code>h</code></td>
+                <td>Altezza. Se ci sono tutti e due, vince <code>height</code>.</td>
+              </tr>
+              <tr>
+                <td><code>name</code></td>
+                <td>Nome mostrato sull'hitbox e nei messaggi. Se manca: <code>label</code>, poi <code>id</code>, poi
+                  <code>#indice</code>.</td>
+              </tr>
+              <tr>
+                <td><code>id</code></td>
+                <td>Opzionale. Serve a riconoscere la stessa entità da un frame all'altro.</td>
+              </tr>
+              <tr>
+                <td><code>active</code></td>
+                <td>Con <code>false</code> l'hitbox è grigio. Non cambia le collisioni.</td>
+              </tr>
+              <tr>
+                <td><code>colliding</code></td>
+                <td>Con <code>true</code> l'entità conta come in collisione, anche senza sovrapposizioni.</td>
+              </tr>
+              <tr>
+                <td><code>primary</code></td>
+                <td>Con <code>true</code> è l'entità seguita dal pacchetto <code>coord</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>I valori devono essere numeri finiti: una stringa come <code>'40'</code> non vale. Un'entità senza posizione
+          valida, o con larghezza o altezza pari a 0 o negative, viene scartata in silenzio e non compare in
+          <code>entities</code>.</p>
+        <p>Il pacchetto <code>coord</code> segue la prima entità con <code>primary: true</code> oppure con nome
+          <code>player</code> o <code>hero</code> (maiuscole ininfluenti). Se non c'è, segue la prima entità valida.</p>
+
+        <h2 id="opzioni">Opzioni</h2>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Opzione</th>
+                <th>Default</th>
+                <th>Effetto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>canvas</code></td>
+                <td><code>null</code></td>
+                <td>Il canvas del gioco. Senza, la telemetria funziona ma gli hitbox non si disegnano.</td>
+              </tr>
+              <tr>
+                <td><code>entities</code></td>
+                <td><code>[]</code></td>
+                <td>La lista delle entità.</td>
+              </tr>
+              <tr>
+                <td><code>overlay</code></td>
+                <td><code>true</code></td>
+                <td>Disegna gli hitbox su un canvas sovrapposto.</td>
+              </tr>
+              <tr>
+                <td><code>computeCollisions</code></td>
+                <td><code>true</code></td>
+                <td>Calcola le sovrapposizioni. Con <code>false</code> conta solo <code>colliding: true</code>.</td>
+              </tr>
+              <tr>
+                <td><code>autoPump</code></td>
+                <td><code>false</code></td>
+                <td>Chiama <code>pump()</code> da un ciclo interno. Vedi <a href="#autopump">autoPump</a>.</td>
+              </tr>
+              <tr>
+                <td><code>colorActive</code></td>
+                <td><code>'#3dff6a'</code></td>
+                <td>Colore degli hitbox normali.</td>
+              </tr>
+              <tr>
+                <td><code>colorColliding</code></td>
+                <td><code>'#ff3b3b'</code></td>
+                <td>Colore degli hitbox in collisione.</td>
+              </tr>
+              <tr>
+                <td><code>colorInactive</code></td>
+                <td><code>'#8a8a8a'</code></td>
+                <td>Colore delle entità con <code>active: false</code>.</td>
+              </tr>
+              <tr>
+                <td><code>source</code></td>
+                <td><code>'canvas'</code></td>
+                <td>Il <code>source</code> di tutti i pacchetti. Per il Core è anche il nome del modulo.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="pacchetti">Cosa invia al Core</h2>
+        <p>Tutti i pacchetti portano <code>source: 'canvas'</code>. Il formato di ogni tipo è nel
+          <a href="#/bee-ladybug/concetti/">contratto <code>sendData</code></a>.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Quando</th>
+                <th>Contenuto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>fps</code></td>
+                <td>A ogni <code>pump()</code>, dalla seconda chiamata</td>
+                <td><code>value</code>: FPS del gioco, misurati tra un <code>pump()</code> e l'altro</td>
+              </tr>
+              <tr>
+                <td><code>metric</code></td>
+                <td>A ogni <code>pump()</code></td>
+                <td><code>entities</code>: entità valide. <code>hits</code>: entità in collisione.</td>
+              </tr>
+              <tr>
+                <td><code>state</code></td>
+                <td>A ogni <code>pump()</code></td>
+                <td><code>key: 'hits'</code>, <code>value</code> come <code>'2 / 5'</code></td>
+              </tr>
+              <tr>
+                <td><code>coord</code></td>
+                <td>A ogni <code>pump()</code>, se c'è un'entità valida</td>
+                <td><code>label</code>: nome dell'entità seguita, <code>x</code>, <code>y</code></td>
+              </tr>
+              <tr>
+                <td><code>warn</code></td>
+                <td>Un'entità entra in collisione</td>
+                <td><code>message</code>: <code>player entered collision</code></td>
+              </tr>
+              <tr>
+                <td><code>log</code></td>
+                <td>Un'entità esce dalla collisione</td>
+                <td><code>message</code>: <code>player left collision</code></td>
+              </tr>
+              <tr>
+                <td><code>log</code>, <code>state</code></td>
+                <td><code>attach()</code></td>
+                <td><code>CanvasAdapter attached (N entities).</code> e <code>key: 'adapter'</code></td>
+              </tr>
+              <tr>
+                <td><code>warn</code></td>
+                <td><code>attach()</code> con <code>overlay</code> attivo e senza <code>canvas</code></td>
+                <td><code>no canvas: hitboxes are not drawn…</code>, una volta sola</td>
+              </tr>
+              <tr>
+                <td><code>warn</code></td>
+                <td><code>pump()</code> a mano mentre <code>autoPump</code> è attivo</td>
+                <td><code>pump() skipped…</code>, una volta sola</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Il messaggio di collisione usa sempre il nome dell'entità, anche quando ha un <code>id</code>. Nell'overlay
+          del Core finiscono in console solo <code>log</code> e <code>warn</code>: <code>fps</code>,
+          <code>metric</code>, <code>state</code> e <code>coord</code> vanno nell'HUD e nello storico.</p>
+
+        <h2 id="overlay">Overlay degli hitbox</h2>
+        <p>Con <code>overlay: true</code> l'adapter crea un canvas fisso sopra al tuo, con <code>pointer-events:
+            none</code>, e lo tiene allineato a quello del gioco quando la pagina viene ridimensionata o scorre. Ogni
+          rettangolo ha il suo nome sopra l'angolo.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Colore</th>
+                <th>Significato</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Verde (<code>colorActive</code>)</td>
+                <td>Entità attiva, senza collisione</td>
+              </tr>
+              <tr>
+                <td>Rosso (<code>colorColliding</code>)</td>
+                <td>Entità in collisione, con riempimento rosso leggero</td>
+              </tr>
+              <tr>
+                <td>Grigio (<code>colorInactive</code>)</td>
+                <td>Entità con <code>active: false</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><kbd>F2</kbd> nasconde il pannello e anche gli hitbox. Il pulsante <strong>CANVAS</strong> nel pannello fa
+          di più: spegne l'adapter. Gli hitbox spariscono, <code>pump()</code> non invia più niente e il report
+          (<code>snapshot()</code>) resta disponibile.</p>
+        <p>Il canvas del gioco può arrivare dopo: <code>setCanvas(canvas)</code> monta l'overlay,
+          <code>setCanvas(null)</code> lo toglie.</p>
+        <h3>Disegnare sul canvas del gioco</h3>
+        <p>Con <code>overlay: false</code> non nasce nessun canvas in più. Passa il contesto 2D a
+          <code>pump(ctx)</code> e gli hitbox vengono disegnati sul canvas del gioco. In questo caso l'adapter non lo
+          pulisce: chiama <code>pump(ctx)</code> dopo aver disegnato il frame.</p>
+        <div class="bld-code">
+          <div class="bld-code-head">js<button class="bld-copy">Copia</button></div>
+          <pre><code><span class="k">const</span> ctx = canvas.<span class="f">getContext</span>(<span class="s">'2d'</span>);
+<span class="k">const</span> adapter = <span class="k">new</span> <span class="f">CanvasAdapter</span>(bee, { canvas, entities, overlay: <span class="k">false</span> });
+adapter.<span class="f">attach</span>();
+
+<span class="c">// nel loop, dopo aver disegnato il gioco:</span>
+adapter.<span class="f">pump</span>(ctx);</code></pre>
+        </div>
+
+        <h2 id="tempo">Freeze e slow</h2>
+        <p>Con <kbd>F4</kbd> e <kbd>F3</kbd> (o <code>bee.freeze()</code> e <code>bee.setTimeScale()</code>) il Core
+          cambia il suo clock. L'adapter non ferma il gioco: copia i valori in <code>adapter.frozen</code> e
+          <code>adapter.timeScale</code>, e sta al tuo codice rispettarli.</p>
+        <div class="bld-code">
+          <div class="bld-code-head">js<button class="bld-copy">Copia</button></div>
+          <pre><code><span class="k">function</span> <span class="f">update</span>(dt) {
+  <span class="k">if</span> (adapter.frozen) <span class="k">return</span>;
+  <span class="k">const</span> step = dt * adapter.timeScale;
+  player.x += speed * step;
+}</code></pre>
+        </div>
+        <p>Il conteggio degli FPS non si ferma con il freeze: misura sempre il tempo tra due <code>pump()</code>.</p>
+
+        <h2 id="autopump">autoPump</h2>
+        <p>Dalla console o da un bookmarklet non puoi entrare nel ciclo del gioco. Con <code>autoPump: true</code>
+          l'adapter chiama <code>pump()</code> da solo, a ogni <code>requestAnimationFrame</code>.</p>
+        <div class="bld-code">
+          <div class="bld-code-head">js<button class="bld-copy">Copia</button></div>
+          <pre><code><span class="k">const</span> adapter = <span class="k">new</span> <span class="f">CanvasAdapter</span>(bee, { canvas, entities, autoPump: <span class="k">true</span> });
+adapter.<span class="f">attach</span>();
+
+<span class="c">// più tardi: da qui in poi puoi chiamare pump() a mano</span>
+adapter.<span class="f">stopAutoPump</span>();</code></pre>
+        </div>
+        <p>Mentre il ciclo interno è attivo, un <code>pump()</code> chiamato a mano viene saltato, con un solo
+          avviso (anche in console del browser). <code>startAutoPump()</code> lo riaccende,
+          <code>stopAutoPump()</code> lo ferma e rende di nuovo valido <code>pump()</code> a mano.
+          <code>detach()</code> ferma il ciclo, ma non cambia <code>autoPump</code>: un nuovo
+          <code>attach()</code> lo riavvia.</p>
+
+        <h2 id="api">Metodi</h2>
+        <p>Tutti i metodi, tranne <code>snapshot()</code>, restituiscono l'adapter e si possono concatenare.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Metodo</th>
+                <th>Cosa fa</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>attach()</code></td>
+                <td>Si registra nel Core come <code>canvas</code> (etichetta <code>CANVAS</code>, nessun tasto),
+                  monta l'overlay e avvia <code>autoPump</code> se è attivo.</td>
+              </tr>
+              <tr>
+                <td><code>detach()</code></td>
+                <td>Si toglie dal Core, smonta l'overlay, ferma il ciclo interno e azzera collisioni, campioni FPS e
+                  tempi. Un <code>attach()</code> successivo riparte pulito.</td>
+              </tr>
+              <tr>
+                <td><code>pump(ctx?)</code></td>
+                <td>Un frame di telemetria. Il contesto serve solo con <code>overlay: false</code>.</td>
+              </tr>
+              <tr>
+                <td><code>setCanvas(canvas | null)</code></td>
+                <td>Cambia il canvas del gioco. Con <code>null</code> smonta l'overlay.</td>
+              </tr>
+              <tr>
+                <td><code>setEntities(list)</code></td>
+                <td>Sostituisce la lista delle entità.</td>
+              </tr>
+              <tr>
+                <td><code>startAutoPump()</code></td>
+                <td>Accende il ciclo interno.</td>
+              </tr>
+              <tr>
+                <td><code>stopAutoPump()</code></td>
+                <td>Spegne il ciclo interno e imposta <code>autoPump</code> a <code>false</code>.</td>
+              </tr>
+              <tr>
+                <td><code>snapshot()</code></td>
+                <td>Le righe per il report. Vale <code>null</code> se l'adapter non è attaccato.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Le proprietà che ti servono sono <code>frozen</code>, <code>timeScale</code>, <code>canvas</code> e
+          <code>entities</code>.</p>
+
+        <h2 id="report">Nel report (F8)</h2>
+        <p>Il report HTML (<kbd>F8</kbd> o <code>bee.exportReport()</code>) include una sezione <code>canvas</code> con
+          questo contenuto di <code>snapshot()</code>:</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Riga</th>
+                <th>Contenuto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>hitbox</code>, una per entità</td>
+                <td>Nome, posizione e dimensione, per esempio <code>40,40 32x32</code>, con <code>colliding</code> in
+                  fondo se è in collisione. Gravità <code>warn</code> se in collisione, altrimenti <code>ok</code>.
+                  Numeri arrotondati a un decimale.</td>
+              </tr>
+              <tr>
+                <td><code>fps</code></td>
+                <td><code>min</code>, <code>avg</code> e <code>max</code> degli FPS del gioco. Compare dopo almeno
+                  due <code>pump()</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="limiti">Limiti</h2>
+        <p>Le collisioni sono tra rettangoli senza rotazione, e ogni entità viene confrontata con tutte le altre: il
+          costo cresce col quadrato del numero di entità. A ogni frame partono circa cinque pacchetti, più quelli di
+          collisione. Se hai molte entità, spegni <code>computeCollisions</code> e segna tu <code>colliding</code>.</p>
+
+        <section class="bld-try" id="prova">
+          <h3>▶ Prova in console</h3>
+          <p>Apri una pagina qualsiasi, premi <kbd>F12</kbd> e incolla (se Chrome blocca l'incolla, scrivi
+            <code>allow pasting</code> e riprova). Lo snippet carica <code>bee-ladybug@0.6.2</code> dalla CDN, crea in
+            alto a sinistra un canvas di prova con due rettangoli, <code>player</code> e <code>wall</code>, e usa
+            <code>autoPump</code> perché dalla console non hai il ciclo del gioco.</p>
+          <div class="bld-code">
+            <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
+            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.2/src/index.js'</span>)
+  .<span class="f">then</span>(({ BeeLadybugCore, CanvasAdapter }) =&gt; {
+    <span class="k">const</span> canvas = document.<span class="f">createElement</span>(<span class="s">'canvas'</span>);
+    canvas.width = <span class="s">320</span>;
+    canvas.height = <span class="s">180</span>;
+    canvas.style.cssText = <span class="s">'position:fixed;left:16px;top:16px;background:#1e1e24;z-index:2147483000'</span>;
+    document.body.<span class="f">appendChild</span>(canvas);
+
+    <span class="k">const</span> player = { name: <span class="s">'player'</span>, x: <span class="s">20</span>, y: <span class="s">60</span>, width: <span class="s">40</span>, height: <span class="s">40</span> };
+    <span class="k">const</span> wall = { name: <span class="s">'wall'</span>, x: <span class="s">140</span>, y: <span class="s">40</span>, width: <span class="s">60</span>, height: <span class="s">90</span> };
+
+    <span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>();
+    <span class="k">const</span> adapter = <span class="k">new</span> <span class="f">CanvasAdapter</span>(bee, { canvas, entities: [player, wall], autoPump: <span class="k">true</span> });
+    adapter.<span class="f">attach</span>();
+    Object.<span class="f">assign</span>(window, { bee, adapter, player, wall });
+  });</code></pre>
+          </div>
+          <p>Poi muovi il giocatore contro il muro e fallo uscire di nuovo:</p>
+          <div class="bld-code">
+            <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
+            <pre><code>player.x = <span class="s">150</span>
+player.x = <span class="s">20</span></code></pre>
+          </div>
+          <p style="margin:0">Con <code>player.x = 150</code> i due hitbox diventano rossi e nella console del pannello
+            compaiono <code>player entered collision</code> e <code>wall entered collision</code>; con
+            <code>20</code> escono <code>player left collision</code> e <code>wall left collision</code>.
+            <kbd>F2</kbd> nasconde pannello e hitbox, <kbd>F8</kbd> scarica il report con la sezione
+            <code>canvas</code>.</p>
+        </section>
+
+        <nav class="bld-pager" aria-label="Navigazione pagine">
+          <a href="#/bee-ladybug/concetti/"><small>Precedente</small>← Concetti</a>
+          <a class="next" href="#/bee-ladybug/adapter/webdom/"><small>Successivo</small>WebDOMAdapter →</a>
+        </nav>
+      </main>
+
+      <aside class="bld-toc">
+        <p>In questa pagina</p>
+        <ul>
+          <li><a href="#uso">Uso base</a></li>
+          <li><a href="#entita">Le entità</a></li>
+          <li><a href="#opzioni">Opzioni</a></li>
+          <li><a href="#pacchetti">Cosa invia al Core</a></li>
+          <li><a href="#overlay">Overlay degli hitbox</a></li>
+          <li><a href="#tempo">Freeze e slow</a></li>
+          <li><a href="#autopump">autoPump</a></li>
+          <li><a href="#api">Metodi</a></li>
+          <li><a href="#report">Nel report (F8)</a></li>
+          <li><a href="#limiti">Limiti</a></li>
+          <li><a href="#prova">Prova in console</a></li>
+        </ul>
+      </aside>
+    </div>
+    <script>
+      (function () {
+        var root = document.currentScript.closest('.bld-docs');
+        root.querySelectorAll('.bld-copy').forEach(function (b) {
+          b.addEventListener('click', function () {
+            var t = b.closest('.bld-code').querySelector('pre').innerText;
+            navigator.clipboard.writeText(t).then(function () {
+              b.textContent = 'Copiato ✓'; b.classList.add('ok');
+              setTimeout(function () { b.textContent = 'Copia'; b.classList.remove('ok') }, 1600)
+            });
+          });
+        });
+        var links = root.querySelectorAll('.bld-toc a');
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (es) {
+            es.forEach(function (e) {
+              if (e.isIntersecting) {
+                links.forEach(function (l) { l.classList.toggle('is-on', l.getAttribute('href') === '#' + e.target.id) })
+              }
+            })
+          }, { rootMargin: '-20% 0px -70% 0px' });
+          root.querySelectorAll('h2[id],section[id]').forEach(function (h) { io.observe(h) });
+        }
+      })();
+    </script>
+  </div>
+
+</html>
