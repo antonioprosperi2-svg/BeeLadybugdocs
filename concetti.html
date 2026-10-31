@@ -673,11 +673,11 @@
   </style>
   <div class="bld-docs">
     <nav class="bld-nav" aria-label="Documentazione BeeLadybug">
-      <a class="bld-logo" href="#/bee-ladybug/inizia/"><span class="bld-dot"></span>BeeLadybug <span
-          style="color:var(--mut);font-weight:500">docs</span></a>
+      <a class="bld-logo" href="https://antonioprosperi2-svg.github.io/BeeLadybug-universal/index.html"><span
+          class="bld-dot"></span>BeeLadybug <span style="color:var(--mut);font-weight:500">docs</span></a>
       <ul>
-        <li><a href="#/bee-ladybug/inizia/">Inizia</a></li>
-        <li><a class="is-active" href="#/bee-ladybug/concetti/" aria-current="page">Concetti</a></li>
+        <li><a href="https://beeenginejs.com/ladybug/inizia/">Inizia</a></li>
+        <li><a class="is-active" href="https://beeenginejs.com/ladybug/concetti/" aria-current="page">Concetti</a></li>
         <li><a href="#/bee-ladybug/adapter/">Adapter</a></li>
         <li><a href="#/bee-ladybug/api/">API</a></li>
         <li><a href="#/bee-ladybug/risorse/">Risorse</a></li>
@@ -698,19 +698,23 @@
 
         <h2 id="cieco">Due strati, un solo ingresso</h2>
         <p><code>src/core/BeeLadybugCore.js</code> tiene il clock, i buffer e l'overlay. Quel modulo importa solo
-          <code>UIOverlay</code>, <code>AiAssistant</code> e <code>ReportExporter</code>.</p>
+          <code>UIOverlay</code>, <code>AiAssistant</code> e <code>ReportExporter</code>.
+        </p>
         <p>L'altro strato è <code>src/adapters/</code>: CanvasAdapter, WebDOMAdapter, CSSAdapter, AntAdapter,
           SpiderAdapter e <code>python/PythonBridge.js</code>. <code>registerAdapter</code> salva un nome e le funzioni
-          <code>enable</code> / <code>disable</code>. Dentro il Core non c'è un import di questi moduli.</p>
+          <code>enable</code> / <code>disable</code>. Dentro il Core non c'è un import di questi moduli.
+        </p>
         <p>Tutto entra da <code>sendData(type, payload)</code>. Un numero o una stringa al posto dell'oggetto diventa
           <code>{ value, message }</code>. Se <code>type</code> non è una stringa non vuota, <code>sendData</code>
-          ritorna <code>null</code> e non emette nulla.</p>
+          ritorna <code>null</code> e non emette nulla.
+        </p>
 
         <h2 id="contratto">Contratto sendData</h2>
         <p><code>WELL_KNOWN_TYPES</code> è la lista dei tipi che l'overlay tratta per primi. Una stringa fuori lista
           viene comunque salvata in <code>getLatest</code> e inoltrata a <code>subscribe</code>: nel buffer di console
           ci entra solo se il payload ha <code>level</code>. <code>log</code>, <code>warn</code>, <code>error</code> e
-          <code>debug</code> ci entrano sempre.</p>
+          <code>debug</code> ci entrano sempre.
+        </p>
         <p>Il Core legge solo i campi qui sotto. Chiavi in più restano nel payload e non cambiano HUD né storico:
           AntAdapter aggiunge <code>node</code> sui warn, SpiderAdapter aggiunge <code>attribution</code> sulla
           telemetry.</p>
@@ -733,14 +737,17 @@
               <tr>
                 <td><code>metric</code></td>
                 <td><code>name</code> oppure <code>key</code> (default <code>metric</code>), <code>value</code>,
-                  <code>unit</code> opzionale</td>
+                  <code>unit</code> opzionale
+                </td>
                 <td>HUD sulla serie. Lo storico si aggiorna solo se <code>value</code> è un numero finito. Nel codice:
-                  <code>entities</code>, <code>hits</code>, <code>nodes</code>, <code>mutations</code>.</td>
+                  <code>entities</code>, <code>hits</code>, <code>nodes</code>, <code>mutations</code>.
+                </td>
               </tr>
               <tr>
                 <td><code>coord</code></td>
                 <td><code>label</code> oppure <code>name</code> (default <code>coord</code>), <code>x</code>,
-                  <code>y</code></td>
+                  <code>y</code>
+                </td>
                 <td>HUD. Se <code>x</code> e <code>y</code> sono entrambi numeri, il valore è <code>x, y</code>.
                   Altrimenti l'HUD mostra il payload intero.</td>
               </tr>
@@ -762,22 +769,26 @@
               <tr>
                 <td><code>state</code></td>
                 <td><code>key</code> oppure <code>name</code> (default <code>state</code>), <code>value</code>,
-                  <code>unit</code> opzionale</td>
+                  <code>unit</code> opzionale
+                </td>
                 <td>HUD. Niente storico.</td>
               </tr>
               <tr>
                 <td><code>sys</code></td>
                 <td>dipende da <code>op</code>, tabella sotto</td>
                 <td>Lo emette il Core. Non entra in HUD né in console. Se lo mandi tu, viene salvato in
-                  <code>getLatest('sys')</code> e inoltrato ai subscriber, senza altri effetti.</td>
+                  <code>getLatest('sys')</code> e inoltrato ai subscriber, senza altri effetti.
+                </td>
               </tr>
               <tr>
                 <td><code>clear</code></td>
                 <td><code>channel</code> oppure <code>type</code>: <code>logs</code>, <code>history</code>,
-                  <code>hud</code></td>
+                  <code>hud</code>
+                </td>
                 <td>Svuota quei buffer. Se il campo manca, svuota tutti e tre. Un valore diverso non svuota nulla. Il
                   pacchetto restituito è <code>sys</code> con <code>op: 'clear'</code>. Non aggiorna
-                  <code>getLatest</code>.</td>
+                  <code>getLatest</code>.
+                </td>
               </tr>
               <tr>
                 <td><code>telemetry</code></td>
@@ -785,20 +796,23 @@
                   oppure <code>value</code></td>
                 <td>Solo storico, niente HUD. SpiderAdapter manda <code>kind: 'longtask'</code> e
                   <code>duration</code>. Se <code>source</code> coincide col nome di un modulo registrato, l'overlay fa
-                  lampeggiare il suo pulsante (vale anche per <code>warn</code>).</td>
+                  lampeggiare il suo pulsante (vale anche per <code>warn</code>).
+                </td>
               </tr>
               <tr>
                 <td><code>debug</code></td>
                 <td><code>message</code>, <code>source</code> opzionale, <code>level</code> opzionale</td>
                 <td>Stesso percorso console di <code>log</code> (livello <code>info</code> se manca). Non è in
-                  <code>WELL_KNOWN_TYPES</code>. Nessun modulo in <code>src/</code> lo emette.</td>
+                  <code>WELL_KNOWN_TYPES</code>. Nessun modulo in <code>src/</code> lo emette.
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
         <p><code>source</code>, se è una stringa non vuota, viene copiato sul pacchetto. Altrimenti il pacchetto porta
           <code>source: 'adapter'</code>. <code>level</code> parte da <code>payload.level</code> quando c'è; se manca,
-          valgono le regole della tabella e gli altri tipi restano <code>null</code>.</p>
+          valgono le regole della tabella e gli altri tipi restano <code>null</code>.
+        </p>
         <p>La riga in console mostra <code>payload.message</code>, poi <code>payload.value</code>, poi il nome del
           tipo.</p>
 
@@ -837,7 +851,8 @@
               <tr>
                 <td><code>adapter</code></td>
                 <td><code>name</code>, <code>registered: true</code>, <code>label</code>, <code>hotkey</code>,
-                  <code>enabled</code></td>
+                  <code>enabled</code>
+                </td>
                 <td><code>registerAdapter</code></td>
               </tr>
               <tr>
@@ -849,7 +864,8 @@
                 <td><code>adapter</code></td>
                 <td><code>name</code>, <code>enabled</code></td>
                 <td><code>setAdapterEnabled</code> / <code>toggleAdapter</code>. Qui non c'è
-                  <code>registered</code>.</td>
+                  <code>registered</code>.
+                </td>
               </tr>
               <tr>
                 <td><code>clear</code></td>
@@ -873,7 +889,8 @@
 
         <h2 id="tempo">Tempo reale e tempo fittizio</h2>
         <p>Ogni pacchetto, oltre a <code>id</code>, <code>type</code>, <code>payload</code>, <code>source</code> e
-          <code>level</code>, riceve tre marche di tempo.</p>
+          <code>level</code>, riceve tre marche di tempo.
+        </p>
         <div class="bld-table">
           <table>
             <thead>
@@ -904,7 +921,8 @@
         <p><kbd>F3</kbd> alterna <code>slowScale</code> (di default <code>0.25</code>) e <code>1</code>. Rallenta solo
           <code>simTime</code>: <code>frame</code> continua a salire a ogni tick. Se il clock era fermo, <kbd>F3</kbd>
           lo riavvia e poi applica la scala. Se <code>timeScale</code> non è già <code>0.25</code>, <kbd>F3</kbd> lo
-          porta a <code>0.25</code>: non ricorda un'altra scala impostata con <code>setTimeScale</code>.</p>
+          porta a <code>0.25</code>: non ricorda un'altra scala impostata con <code>setTimeScale</code>.
+        </p>
         <p><code>setTimeScale(0)</code> ferma solo <code>simTime</code>. Il frame si ferma soltanto con il freeze.</p>
         <p><kbd>F4</kbd> blocca <code>simTime</code> e <code>frame</code>. L'overlay no: il pannello si ridisegna.
           I pacchetti nuovi portano un <code>wallTime</code> più alto, mentre <code>simTime</code> e <code>frame</code>
@@ -913,14 +931,16 @@
           visibile. A overlay nascosto rispondono solo <kbd>F2</kbd> e <kbd>F8</kbd> (<kbd>F8</kbd> scarica il report,
           come <code>bee.exportReport()</code>). <code>bee.freeze()</code> e
           <code>bee.setTimeScale()</code> non guardano la visibilità: sono i metodi. I tasti sono il collegamento
-          quando il pannello è aperto.</p>
+          quando il pannello è aperto.
+        </p>
 
         <section class="bld-try" id="prova">
           <h3>▶ Prova in console</h3>
           <p>Apri una pagina qualsiasi, premi <kbd>F12</kbd> e incolla (se Chrome blocca l'incolla,
             scrivi <code>allow pasting</code> e riprova). Lo snippet carica il modulo
             <code>bee-ladybug@0.6.2</code> dalla CDN, lascia correre il clock, poi congela e ristampa
-            <code>wallTime</code>, <code>simTime</code> e <code>frame</code>.</p>
+            <code>wallTime</code>, <code>simTime</code> e <code>frame</code>.
+          </p>
           <div class="bld-code">
             <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
             <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.2/src/index.js'</span>)
@@ -945,7 +965,8 @@
           </div>
           <p style="margin:0">L'overlay parte visibile: <kbd>F2</kbd> lo nasconde. <kbd>F4</kbd>, col pannello aperto,
             fa lo stesso di <code>bee.freeze()</code>. Nella stampa, <code>wallTime</code> cresce;
-            <code>simTime</code> e <code>frame</code> della seconda riga restano quelli della prima.</p>
+            <code>simTime</code> e <code>frame</code> della seconda riga restano quelli della prima.
+          </p>
         </section>
 
         <nav class="bld-pager" aria-label="Navigazione pagine">

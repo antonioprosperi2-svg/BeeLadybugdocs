@@ -666,11 +666,11 @@
   </style>
   <div class="bld-docs">
     <nav class="bld-nav" aria-label="Documentazione BeeLadybug">
-      <a class="bld-logo" href="#/bee-ladybug/inizia/"><span class="bld-dot"></span>BeeLadybug <span
-          style="color:var(--mut);font-weight:500">docs</span></a>
+      <a class="bld-logo" href="https://antonioprosperi2-svg.github.io/BeeLadybug-universal/index.html"><span
+          class="bld-dot"></span>BeeLadybug <span style="color:var(--mut);font-weight:500">docs</span></a>
       <ul>
-        <li><a class="is-active" href="#/bee-ladybug/inizia/" aria-current="page">Inizia</a></li>
-        <li><a href="#/bee-ladybug/concetti/">Concetti</a></li>
+        <li><a class="is-active" href="https://beeenginejs.com/ladybug/inizia/" aria-current="page">Inizia</a></li>
+        <li><a href="https://beeenginejs.com/ladybug/concetti/">Concetti</a></li>
         <li><a href="#/bee-ladybug/adapter/">Adapter</a></li>
         <li><a href="#/bee-ladybug/api/">API</a></li>
         <li><a href="#/bee-ladybug/risorse/">Risorse</a></li>
@@ -713,7 +713,8 @@
 bee.<span class="f">sendData</span>(<span class="s">'log'</span>, { message: <span class="s">'boot'</span>, source: <span class="s">'app'</span> });</code></pre>
         </div>
         <p>Il percorso funziona con il server statico del passo 1, avviato dalla cartella dove hai fatto
-          <code>npm i</code>. Con un bundler (Vite, webpack, ecc.) basta <code>'bee-ladybug'</code>.</p>
+          <code>npm i</code>. Con un bundler (Vite, webpack, ecc.) basta <code>'bee-ladybug'</code>.
+        </p>
         <h3>3. Invia pacchetti</h3>
         <p>Tutto passa da <code>sendData(type, payload)</code>. Ogni pacchetto riceve <code>wallTime</code>,
           <code>simTime</code> e <code>frame</code>.
@@ -736,7 +737,8 @@ bee.<span class="f">sendData</span>(<span class="s">'error'</span>,  { source: <
 bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <span class="s">'loss'</span>, value: <span class="s">0.12</span> });</code></pre>
         </div>
         <p>In headless <code>bee.exportReport()</code> restituisce il report (<code>'html'</code>, <code>'json'</code> o
-          <code>'csv'</code>) e non scarica nessun file.</p>
+          <code>'csv'</code>) e non scarica nessun file.
+        </p>
 
         <h2 id="tasti">Tasti rapidi</h2>
         <div class="bld-table">
@@ -767,7 +769,8 @@ bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <sp
               <tr>
                 <td><kbd>F8</kbd></td>
                 <td>Scarica un report HTML della telemetria, anche a overlay nascosto (da codice:
-                  <code>bee.exportReport()</code>)</td>
+                  <code>bee.exportReport()</code>)
+                </td>
               </tr>
               <tr>
                 <td><kbd>P</kbd></td>
@@ -811,11 +814,13 @@ bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <sp
           <h3>▶ Prova in console</h3>
           <p>Puoi provare BeeLadybug su una pagina vera, senza installare niente. Il codice qui sotto carica la versione
             0.6.2 dalla CDN e la attiva sulla pagina.</p>
-          <p><strong>1.</strong> Apri il tuo sito. Alcuni siti bloccano gli script esterni: se il codice non parte, prova
+          <p><strong>1.</strong> Apri il tuo sito. Alcuni siti bloccano gli script esterni: se il codice non parte,
+            prova
             su un altro sito.</p>
           <p><strong>2.</strong> Premi <kbd>F12</kbd> e vai nella scheda <strong>Console</strong>.</p>
           <p><strong>3.</strong> Incolla il codice e premi Invio. Se Chrome blocca l'incolla, scrivi
-            <code>allow pasting</code>, premi Invio e incolla di nuovo.</p>
+            <code>allow pasting</code>, premi Invio e incolla di nuovo.
+          </p>
           <div class="bld-code">
             <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
             <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.2/src/index.js'</span>)
@@ -835,7 +840,8 @@ bee.<span class="f">sendData</span>(<span class="s">'error'</span>, { source: <s
           </div>
           <p style="margin:0">L'overlay compare subito. Tasti: <kbd>F2</kbd> mostra o nasconde l'overlay,
             <kbd>F3</kbd> rallenta il tempo (slow), <kbd>F4</kbd> lo ferma (freeze: il clock fittizio si ferma,
-            l'overlay no), <kbd>F6</kbd> attiva la CSS hunt, <kbd>F8</kbd> scarica il report.</p>
+            l'overlay no), <kbd>F6</kbd> attiva la CSS hunt, <kbd>F8</kbd> scarica il report.
+          </p>
         </section>
 
         <nav class="bld-pager" aria-label="Navigazione pagine">
