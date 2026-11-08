@@ -15,6 +15,32 @@
 -->
   <style>
     /* BeeLadybug Docs — foglio condiviso. Tutto sotto .bld-docs */
+    body:has(.bld-docs) {
+      background: #0b0b0d !important;
+      padding-top: 58px !important;
+      overflow-x: clip
+    }
+
+    body:has(.bld-docs) #masthead,
+    body:has(.bld-docs) .entry-header {
+      display: none !important
+    }
+
+    body:has(.bld-docs) .site.grid-container,
+    body:has(.bld-docs) .site-content,
+    body:has(.bld-docs) .content-area,
+    body:has(.bld-docs) .site-main,
+    body:has(.bld-docs) .inside-article,
+    body:has(.bld-docs) .entry-content {
+      max-width: none !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      border: 0 !important
+    }
+
     .bld-docs {
       --bg: #0b0b0d;
       --panel: #141418;
@@ -30,8 +56,8 @@
       font: 16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       background-image: radial-gradient(rgba(255, 255, 255, .035) 1.5px, transparent 1.6px);
       background-size: 22px 22px;
-      border-radius: 14px;
-      overflow: hidden
+      border-radius: 0;
+      overflow-x: clip
     }
 
     .bld-docs * {
@@ -60,9 +86,12 @@
     }
 
     .bld-docs .bld-nav {
-      position: sticky;
+      position: fixed;
       top: 0;
-      z-index: 5;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 1000;
       display: flex;
       align-items: center;
       gap: 28px;
@@ -70,6 +99,16 @@
       background: rgba(11, 11, 13, .92);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--line)
+    }
+
+    .admin-bar .bld-docs .bld-nav {
+      top: 32px
+    }
+
+    @media screen and (max-width:782px) {
+      .admin-bar .bld-docs .bld-nav {
+        top: 46px
+      }
     }
 
     .bld-docs .bld-logo {
@@ -562,7 +601,7 @@
       box-sizing: border-box !important;
       max-width: 100% !important;
       width: 100%;
-      overflow-x: hidden !important
+      overflow-x: clip !important
     }
 
     .bld-docs *,
