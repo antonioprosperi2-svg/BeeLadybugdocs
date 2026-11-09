@@ -1,0 +1,1121 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>WebDOMAdapter: box model, hover e mutazioni DOM | Docs</title>
+  <!--
+  SEO suggerito (Yoast/RankMath):
+  Title: WebDOMAdapter: box model, hover e mutazioni DOM | Docs
+  Meta description: WebDOMAdapter di BeeLadybug 0.6.3: ispeziona il box model sotto il puntatore, evidenzia i selettori in watch, misura le mutazioni DOM e popola il report F8.
+  Slug: /ladybug/adapter/webdom/
+
+  VERSIONE ALL-IN-ONE: CSS e JS già inclusi, incolla tutto in un solo blocco HTML personalizzato.
+  Stesse classi della pagina Inizia (.bld-docs, .bld-code, .bld-copy, kbd, span.f / span.s).
+-->
+  <style>
+    /* BeeLadybug Docs — foglio condiviso. Tutto sotto .bld-docs */
+    body:has(.bld-docs) {
+      background: #0b0b0d !important;
+      padding-top: 58px !important;
+      overflow-x: clip
+    }
+
+    body:has(.bld-docs) #masthead,
+    body:has(.bld-docs) .entry-header {
+      display: none !important
+    }
+
+    body:has(.bld-docs) .site.grid-container,
+    body:has(.bld-docs) .site-content,
+    body:has(.bld-docs) .content-area,
+    body:has(.bld-docs) .site-main,
+    body:has(.bld-docs) .inside-article,
+    body:has(.bld-docs) .entry-content {
+      max-width: none !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      border: 0 !important
+    }
+
+    .bld-docs {
+      --bg: #0b0b0d;
+      --panel: #141418;
+      --line: #26262c;
+      --red: #E63946;
+      --red2: #ff5c69;
+      --cyan: #22d3ee;
+      --amber: #f5a524;
+      --txt: #e8e8ec;
+      --mut: #9a9aa6;
+      background: var(--bg);
+      color: var(--txt);
+      font: 16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background-image: radial-gradient(rgba(255, 255, 255, .035) 1.5px, transparent 1.6px);
+      background-size: 22px 22px;
+      border-radius: 0;
+      overflow-x: clip
+    }
+
+    .bld-docs * {
+      box-sizing: border-box
+    }
+
+    .bld-docs a {
+      color: var(--red2);
+      text-decoration: none
+    }
+
+    .bld-docs a:hover {
+      text-decoration: underline
+    }
+
+    .bld-docs code {
+      font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+      font-size: .88em
+    }
+
+    .bld-docs :not(pre)>code {
+      background: #1d1d23;
+      color: var(--cyan);
+      padding: .1em .4em;
+      border-radius: 5px
+    }
+
+    .bld-docs .bld-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      padding: 14px 32px;
+      background: rgba(11, 11, 13, .92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .admin-bar .bld-docs .bld-nav {
+      top: 32px
+    }
+
+    @media screen and (max-width:782px) {
+      .admin-bar .bld-docs .bld-nav {
+        top: 46px
+      }
+    }
+
+    .bld-docs .bld-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--txt);
+      letter-spacing: .2px
+    }
+
+    .bld-docs .bld-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--red);
+      position: relative;
+      box-shadow: 0 0 14px rgba(230, 57, 70, .5)
+    }
+
+    .bld-docs .bld-dot:before,
+    .bld-docs .bld-dot:after {
+      content: "";
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: #000;
+      border-radius: 50%;
+      top: 6px;
+      left: 5px;
+      box-shadow: 7px 0 #000, 3px 6px #000
+    }
+
+    .bld-docs .bld-dot:after {
+      width: 1.5px;
+      height: 22px;
+      top: 0;
+      left: 10px;
+      border-radius: 0;
+      box-shadow: none
+    }
+
+    .bld-docs .bld-nav ul {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap
+    }
+
+    .bld-docs .bld-nav li a {
+      display: block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      color: var(--mut);
+      font-weight: 600;
+      font-size: 14px
+    }
+
+    .bld-docs .bld-nav li a:hover {
+      color: var(--txt);
+      background: #1b1b20;
+      text-decoration: none
+    }
+
+    .bld-docs .bld-nav li a.is-active {
+      color: #fff;
+      background: #C1121F;
+    }
+
+
+
+    .bld-docs .bld-ver {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--cyan);
+      border: 1px solid #164e5a;
+      padding: 3px 10px;
+      border-radius: 999px
+    }
+
+    .bld-docs .bld-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 48px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 32px 56px
+    }
+
+    .bld-docs .bld-hero {
+      padding: 8px 0 24px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 12px
+    }
+
+    .bld-docs .bld-eyebrow {
+      color: var(--red2);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase
+    }
+
+    .bld-docs h1 {
+      font-size: 44px;
+      line-height: 1.1;
+      margin: 10px 0 14px;
+      letter-spacing: -.8px
+    }
+
+    .bld-docs h1 span {
+      color: var(--red)
+    }
+
+    .bld-docs .bld-lead {
+      font-size: 19px;
+      color: #c9c9d2;
+      max-width: 680px;
+      margin: 0
+    }
+
+    .bld-docs blockquote {
+      margin: 20px 0 0;
+      padding: 12px 18px;
+      border-left: 3px solid var(--red);
+      background: #16161b;
+      color: var(--mut);
+      border-radius: 0 8px 8px 0;
+      font-style: italic
+    }
+
+    .bld-docs h2 {
+      font-size: 26px;
+      margin: 44px 0 12px;
+      scroll-margin-top: 80px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .bld-docs h2:before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 0 4px rgba(230, 57, 70, .15)
+    }
+
+    .bld-docs h3 {
+      font-size: 18px;
+      margin: 26px 0 8px;
+      color: #f2f2f5
+    }
+
+    .bld-docs p {
+      color: #cfcfd8
+    }
+
+    .bld-docs .bld-code {
+      position: relative;
+      margin: 14px 0 20px;
+      background: #08090b;
+      border: 1px solid #1c2a2f;
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    .bld-docs .bld-code-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 12px;
+      background: #0f1417;
+      border-bottom: 1px solid #1c2a2f;
+      font-size: 12px;
+      color: #6fb9c7;
+      font-family: ui-monospace, Menlo, monospace
+    }
+
+    .bld-docs .bld-copy {
+      background: transparent;
+      border: 1px solid #23414a;
+      color: var(--cyan);
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer
+    }
+
+    .bld-docs .bld-copy:hover {
+      background: #0f2a31
+    }
+
+    .bld-docs .bld-copy.ok {
+      border-color: var(--red);
+      color: var(--red2)
+    }
+
+    .bld-docs pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      color: #d6f6fb;
+      line-height: 1.55
+    }
+
+    .bld-docs .k {
+      color: var(--red2)
+    }
+
+    .bld-docs .s {
+      color: #a7f3d0
+    }
+
+    .bld-docs .c {
+      color: #5b6b72;
+      font-style: italic
+    }
+
+    .bld-docs .f {
+      color: var(--cyan)
+    }
+
+    .bld-docs table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 15px;
+      background: var(--panel);
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    .bld-docs th,
+    .bld-docs td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .bld-docs th {
+      background: #1a1a20;
+      color: var(--mut);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px
+    }
+
+    .bld-docs kbd {
+      display: inline-block;
+      min-width: 34px;
+      text-align: center;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: #1f1f25;
+      border: 1px solid #33333c;
+      border-bottom-width: 3px;
+      font: 600 13px ui-monospace, monospace;
+      color: #fff
+    }
+
+    .bld-docs .bld-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 16px 0
+    }
+
+    .bld-docs .bld-card {
+      display: block;
+      padding: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--txt);
+      transition: .15s
+    }
+
+    .bld-docs .bld-card:hover {
+      border-color: var(--red);
+      transform: translateY(-2px);
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(230, 57, 70, .12)
+    }
+
+    .bld-docs .bld-card b {
+      display: block;
+      font-size: 16px;
+      margin: 8px 0 4px
+    }
+
+    .bld-docs .bld-card small {
+      color: var(--mut);
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: block
+    }
+
+    .bld-docs .bld-ico {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: rgba(230, 57, 70, .12);
+      color: var(--red2);
+      font-size: 17px
+    }
+
+    .bld-docs .bld-badge {
+      display: inline-block;
+      font: 600 11px ui-monospace, monospace;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #0f2a31;
+      color: var(--cyan);
+      margin-right: 4px
+    }
+
+    .bld-docs .bld-badge.warn {
+      background: #2e2108;
+      color: var(--amber)
+    }
+
+    .bld-docs .bld-badge.err {
+      background: #2e0e12;
+      color: var(--red2)
+    }
+
+    .bld-docs .bld-try {
+      margin: 24px 0;
+      padding: 20px 22px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(34, 211, 238, .08), rgba(230, 57, 70, .08));
+      border: 1px solid #1f3a40
+    }
+
+    .bld-docs .bld-try h3 {
+      margin-top: 0;
+      color: var(--cyan)
+    }
+
+    .bld-docs .bld-note {
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: #1a1410;
+      border: 1px solid #3a2a12;
+      color: #e9c98c;
+      font-size: 14.5px
+    }
+
+    .bld-docs .bld-toc {
+      position: sticky;
+      top: 84px;
+      align-self: start;
+      font-size: 14px
+    }
+
+    .bld-docs .bld-toc p {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--mut);
+      margin: 0 0 10px;
+      font-weight: 700
+    }
+
+    .bld-docs .bld-toc ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-left: 1px solid var(--line)
+    }
+
+    .bld-docs .bld-toc a {
+      display: block;
+      padding: 5px 14px;
+      color: var(--mut);
+      margin-left: -1px;
+      border-left: 2px solid transparent
+    }
+
+    .bld-docs .bld-toc a:hover,
+    .bld-docs .bld-toc a.is-on {
+      color: var(--txt);
+      border-left-color: var(--red);
+      text-decoration: none
+    }
+
+    .bld-docs .bld-pager {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line)
+    }
+
+    .bld-docs .bld-pager a {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--txt)
+    }
+
+    .bld-docs .bld-pager a:hover {
+      border-color: var(--red);
+      text-decoration: none
+    }
+
+    .bld-docs .bld-pager small {
+      display: block;
+      color: var(--mut);
+      font-size: 12px
+    }
+
+    .bld-docs .bld-pager .next {
+      text-align: right;
+      grid-column: 2
+    }
+
+    .bld-docs .bld-pager .is-off {
+      opacity: .4;
+      pointer-events: none
+    }
+
+    @media(max-width:960px) {
+      .bld-docs .bld-wrap {
+        grid-template-columns: 1fr
+      }
+
+      .bld-docs .bld-toc {
+        display: none
+      }
+    }
+
+    @media(max-width:640px) {
+      .bld-docs .bld-nav {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 16px
+      }
+
+      .bld-docs .bld-nav ul {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        width: 100%
+      }
+
+      .bld-docs .bld-ver {
+        display: none
+      }
+
+      .bld-docs .bld-wrap {
+        padding: 28px 16px
+      }
+
+      .bld-docs h1 {
+        font-size: 32px
+      }
+
+      .bld-docs .bld-lead {
+        font-size: 17px
+      }
+
+      .bld-docs table {
+        font-size: 13.5px
+      }
+
+      .bld-docs th,
+      .bld-docs td {
+        padding: 8px
+      }
+
+      .bld-docs .bld-pager {
+        grid-template-columns: 1fr
+      }
+
+      .bld-docs .bld-pager .next {
+        grid-column: 1
+      }
+    }
+
+    /* ===== Mobile / WordPress hardening ===== */
+    .bld-docs {
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+      width: 100%;
+      overflow-x: clip !important
+    }
+
+    .bld-docs *,
+    .bld-docs *:before,
+    .bld-docs *:after {
+      box-sizing: border-box !important;
+      max-width: 100%
+    }
+
+    .bld-docs .bld-wrap>*,
+    .bld-docs main,
+    .bld-docs .bld-card,
+    .bld-docs .bld-cards>*,
+    .bld-docs .bld-pager>*,
+    .bld-docs .bld-nav>* {
+      min-width: 0
+    }
+
+    .bld-docs .bld-code {
+      max-width: 100% !important;
+      min-width: 0
+    }
+
+    .bld-docs pre {
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100% !important;
+      white-space: pre !important;
+      word-wrap: normal !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      background: transparent !important;
+      border: 0 !important;
+      margin: 0 !important;
+      padding: 14px 16px !important;
+      font-size: 13.5px !important;
+      color: #d6f6fb !important
+    }
+
+    .bld-docs pre code {
+      white-space: pre !important;
+      background: transparent !important;
+      padding: 0 !important;
+      color: inherit !important;
+      word-break: normal !important;
+      overflow-wrap: normal !important;
+      display: block;
+      max-width: none
+    }
+
+    .bld-docs :not(pre)>code {
+      overflow-wrap: anywhere !important;
+      word-break: break-word !important;
+      white-space: normal !important
+    }
+
+    .bld-docs .bld-table {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100%;
+      margin: 14px 0
+    }
+
+    .bld-docs .bld-table table {
+      margin: 0;
+      min-width: 420px
+    }
+
+    .bld-docs p,
+    .bld-docs li,
+    .bld-docs h1,
+    .bld-docs h2,
+    .bld-docs h3 {
+      overflow-wrap: break-word
+    }
+
+    .bld-docs a.soon {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+  </style>
+  <div class="bld-docs">
+    <nav class="bld-nav" aria-label="Documentazione BeeLadybug">
+      <a class="bld-logo" href="https://antonioprosperi2-svg.github.io/BeeLadybug-universal/"><span
+          class="bld-dot"></span>BeeLadybug <span style="color:var(--mut);font-weight:500">docs</span></a>
+      <ul>
+        <li><a href="https://beeenginejs.com/ladybug/inizia/">Inizia</a></li>
+        <li><a href="https://beeenginejs.com/ladybug/concetti/">Concetti</a></li>
+        <li><a class="is-active" href="#/bee-ladybug/adapter/" aria-current="page">Adapter</a></li>
+        <li><a href="#/bee-ladybug/api/">API</a></li>
+        <li><a href="#/bee-ladybug/risorse/">Risorse</a></li>
+      </ul>
+      <span class="bld-ver">v0.6.3</span>
+    </nav>
+
+    <div class="bld-wrap">
+      <main>
+        <header class="bld-hero">
+          <div class="bld-eyebrow">Adapter</div>
+          <h1>WebDOM<span>Adapter</span></h1>
+          <p class="bld-lead">Traduce il DOM di una pagina HTML in pacchetti per il Core. Segue l'elemento sotto il
+            puntatore, ne disegna il box model (margin, border, padding, content) su un canvas sovrapposto, tiene
+            d'occhio i selettori in <code>watch</code> e conta le mutazioni del DOM.</p>
+          <blockquote>La pagina non sa che la stai ispezionando. L'overlay è in <code>pointer-events: none</code>.
+          </blockquote>
+        </header>
+
+        <h2 id="uso">Uso base</h2>
+        <p>Passa il <code>BeeLadybugCore</code> e, se vuoi limitare l'ispezione a una porzione di pagina, l'elemento
+          <code>root</code> (di default è <code>document.body</code>) e i selettori CSS in <code>watch</code>.</p>
+        <div class="bld-code">
+          <div class="bld-code-head">app.js<button class="bld-copy">Copia</button></div>
+          <pre><code><span class="k">import</span> { BeeLadybugCore, WebDOMAdapter } <span class="k">from</span> <span class="s">'bee-ladybug'</span>;
+
+<span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>();
+<span class="k">const</span> dom = <span class="k">new</span> <span class="f">WebDOMAdapter</span>(bee, {
+  root: document.body,
+  watch: [<span class="s">'.card'</span>, <span class="s">'#cta'</span>]
+});
+dom.<span class="f">attach</span>();</code></pre>
+        </div>
+        <p>Con <code>autoTick: true</code> (il default) l'adapter avvia da solo il suo ciclo
+          <code>requestAnimationFrame</code>: non devi chiamare <code>pump()</code> a mano. Senza bundler, nell'import
+          usa il percorso <code>./node_modules/bee-ladybug/src/index.js</code>, come in <a
+            href="https://beeenginejs.com/ladybug/inizia/">Inizia</a>.</p>
+
+        <h2 id="opzioni">Opzioni</h2>
+        <p>I valori predefiniti sono esportati anche in <code>WEB_DOM_ADAPTER_DEFAULTS</code>.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Opzione</th>
+                <th>Default</th>
+                <th>Effetto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>root</code></td>
+                <td><code>document.body</code></td>
+                <td>Radice osservata per hover, conteggio nodi, selettori <code>watch</code>, mutazioni e problemi nel
+                  report. Se passi <code>null</code>, puoi impostarla dopo con <code>setRoot()</code>.</td>
+              </tr>
+              <tr>
+                <td><code>overlay</code></td>
+                <td><code>true</code></td>
+                <td>Monta un canvas fisso a tutta finestra che disegna il box model e i contorni <code>watch</code>.</td>
+              </tr>
+              <tr>
+                <td><code>autoTick</code></td>
+                <td><code>true</code></td>
+                <td>Chiama <code>pump()</code> a ogni <code>requestAnimationFrame</code>. Con <code>false</code> chiami
+                  tu <code>pump()</code> quando vuoi.</td>
+              </tr>
+              <tr>
+                <td><code>watch</code></td>
+                <td><code>[]</code></td>
+                <td>Lista di selettori CSS cercati dentro <code>root</code>. I nodi trovati vengono contornati in verde
+                  sull'overlay e inclusi nel report. Selettori non validi vengono ignorati senza errori.</td>
+              </tr>
+              <tr>
+                <td><code>source</code></td>
+                <td><code>'dom'</code></td>
+                <td>Il <code>source</code> di tutti i pacchetti inviati al Core.</td>
+              </tr>
+              <tr>
+                <td><code>colorHover</code></td>
+                <td><code>'#6ee7ff'</code></td>
+                <td>Colore del bordo e dell'etichetta dell'elemento sotto il puntatore.</td>
+              </tr>
+              <tr>
+                <td><code>colorWatch</code></td>
+                <td><code>'#3dff6a'</code></td>
+                <td>Colore del contorno per gli elementi in <code>watch</code>.</td>
+              </tr>
+              <tr>
+                <td><code>colorMargin</code></td>
+                <td><code>'rgba(255, 211, 106, 0.18)'</code></td>
+                <td>Riempimento dell'area di margin.</td>
+              </tr>
+              <tr>
+                <td><code>colorPadding</code></td>
+                <td><code>'rgba(61, 255, 106, 0.16)'</code></td>
+                <td>Riempimento dell'area di padding.</td>
+              </tr>
+              <tr>
+                <td><code>colorContent</code></td>
+                <td><code>'rgba(110, 231, 255, 0.20)'</code></td>
+                <td>Riempimento dell'area di content.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="hover">Hover, selettori watch e overlay</h2>
+        <p>Quando muovi il mouse, l'adapter usa <code>document.elementsFromPoint(x, y)</code> per trovare il primo
+          elemento sotto il puntatore che sta dentro <code>root</code>, ignorando sempre l'overlay di BeeLadybug e i
+          canvas di servizio (<code>[data-bee-ladybug-dom]</code> e <code>[data-bee-ladybug-canvas]</code>).</p>
+        <p>Ogni elemento viene identificato con un selettore compatto: <code>tag#id</code> se ha un <code>id</code>,
+          altrimenti <code>tag.classe1.classe2</code> (fino alle prime due classi), altrimenti solo <code>tag</code>.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Area sull'overlay</th>
+                <th>Cosa mostra</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Margin (ambra)</td>
+                <td>Fascia esterna calcolata da <code>marginTop/Right/Bottom/Left</code></td>
+              </tr>
+              <tr>
+                <td>Border (ciano)</td>
+                <td>Rettangolo di <code>getBoundingClientRect()</code> contornato con <code>colorHover</code></td>
+              </tr>
+              <tr>
+                <td>Padding (verde)</td>
+                <td>Fascia interna tra bordo e contenuto</td>
+              </tr>
+              <tr>
+                <td>Content (azzurro)</td>
+                <td>Area utile interna del nodo</td>
+              </tr>
+              <tr>
+                <td>Etichetta</td>
+                <td>Selettore e dimensioni arrotondate (es. <code>div.card  320×180</code>), riposizionata dentro la
+                  finestra se tocca i bordi</td>
+              </tr>
+              <tr>
+                <td>Nodi <code>watch</code></td>
+                <td>Contorno verde (<code>colorWatch</code>) su tutti i nodi che corrispondono ai selettori in
+                  <code>watch</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p><kbd>F2</kbd> nasconde il pannello del Core e anche il canvas del box model. Il pulsante <strong>DOM</strong>
+          nel pannello spegne l'adapter: l'overlay sparisce, <code>pump()</code> e il conteggio delle mutazioni si
+          fermano, mentre <code>snapshot()</code> resta disponibile per il report.</p>
+
+        <h2 id="mutazioni">Mutazioni del DOM e filtro rumore</h2>
+        <p>Se <code>root</code> è presente, <code>attach()</code> attiva un <code>MutationObserver</code> su
+          <code>childList</code>, <code>subtree</code> e sugli attributi <code>class</code>, <code>style</code>,
+          <code>hidden</code>, <code>disabled</code> e <code>open</code>. Le modifiche ai nodi interni di BeeLadybug
+          vengono scartate.</p>
+        <p>Le mutazioni vengono raggruppate in una finestra di <strong>180&nbsp;ms</strong> così una raffica di modifiche
+          non intasa la console: allo scadere parte un pacchetto <code>metric</code> (<code>name: 'mutations'</code>) con
+          il totale e un <code>warn</code> sintetico come <code>mutate +2 -1 attr 3</code>.</p>
+        <h3>Silenzio automatico durante la CSS hunt (<kbd>F6</kbd>)</h3>
+        <p>Quando <code>CSSAdapter</code> (<kbd>F6</kbd>) è attivo a velocità normale (<code>1x</code>) o in freeze
+          (<kbd>F4</kbd>), le righe di <code>hover</code> in console e la parte <code>attr N</code> dei warn di mutazione
+          vengono silenziate per lasciare spazio ai messaggi CSS. Se invece attivi lo slow-motion (<kbd>F3</kbd>), anche
+          hover e attributi tornano visibili. La funzione che decide questa regola è esportata come
+          <code>domNoiseQuiet(cssEnabled, frozen, timeScale)</code>.</p>
+
+        <h2 id="pacchetti">Cosa invia al Core</h2>
+        <p>Tutti i pacchetti portano <code>source: 'dom'</code>. Il formato generale è nel
+          <a href="https://beeenginejs.com/ladybug/concetti/">contratto <code>sendData</code></a>.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Quando</th>
+                <th>Contenuto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>fps</code></td>
+                <td>A ogni <code>pump()</code>, dalla seconda chiamata</td>
+                <td><code>value</code>: frequenza di campionamento dell'adapter</td>
+              </tr>
+              <tr>
+                <td><code>metric</code></td>
+                <td>A ogni <code>pump()</code></td>
+                <td><code>name: 'nodes'</code>, numero di elementi dentro <code>root</code> (incluso <code>root</code>
+                  se è un elemento)</td>
+              </tr>
+              <tr>
+                <td><code>coord</code></td>
+                <td>A ogni <code>pump()</code></td>
+                <td><code>label: 'pointer'</code>, coordinate <code>x</code> e <code>y</code> del puntatore</td>
+              </tr>
+              <tr>
+                <td><code>state</code></td>
+                <td>Con un nodo in hover</td>
+                <td>Tre stati HUD: <code>hover</code> (selettore), <code>box</code> (es. <code>320×180</code>) e
+                  <code>display</code> (es. <code>flex</code>). Quando l'hover torna a <code>null</code>, tutti e tre
+                  tornano a <code>'—'</code>.</td>
+              </tr>
+              <tr>
+                <td><code>log</code></td>
+                <td>Quando cambia il nodo sotto il puntatore</td>
+                <td><code>hover div.card  320×180  block</code> (silenziato se la CSS hunt è attiva senza <kbd>F3</kbd>)
+                </td>
+              </tr>
+              <tr>
+                <td><code>warn</code></td>
+                <td>Dopo 180&nbsp;ms dalle mutazioni DOM</td>
+                <td><code>mutate +added -removed attr N</code></td>
+              </tr>
+              <tr>
+                <td><code>metric</code></td>
+                <td>Dopo 180&nbsp;ms dalle mutazioni DOM</td>
+                <td><code>name: 'mutations'</code>, somma di nodi aggiunti, rimossi e attributi toccati</td>
+              </tr>
+              <tr>
+                <td><code>log</code>, <code>state</code></td>
+                <td><code>attach()</code></td>
+                <td><code>WebDOMAdapter attached…</code> e <code>key: 'adapter', value: 'dom'</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="tempo">Freeze (<kbd>F4</kbd>) e slow (<kbd>F3</kbd>)</h2>
+        <p>Quando premi <kbd>F4</kbd> (o chiami <code>bee.freeze()</code>), l'adapter imposta
+          <code>dom.frozen = true</code>: blocca l'elemento in <code>hover</code> sull'ultimo nodo selezionato (così puoi
+          spostare il mouse senza perdere il box model) e ignora le nuove mutazioni del DOM finché non togli il freeze.
+        </p>
+
+        <h2 id="api">Metodi</h2>
+        <p>Tutti i metodi, tranne <code>snapshot()</code>, restituiscono l'adapter e si possono concatenare.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Metodo</th>
+                <th>Cosa fa</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>attach()</code></td>
+                <td>Si registra nel Core come <code>dom</code> (etichetta <code>DOM</code>, nessun tasto), monta
+                  l'overlay, avvia il <code>MutationObserver</code> e il ciclo <code>autoTick</code>.</td>
+              </tr>
+              <tr>
+                <td><code>detach()</code></td>
+                <td>Si rimuove dal Core, disconnette l'observer, smonta l'overlay e azzera <code>hover</code>, FPS e
+                  contatori di mutazione. Un <code>attach()</code> successivo riparte pulito.</td>
+              </tr>
+              <tr>
+                <td><code>setRoot(root | null)</code></td>
+                <td>Cambia il nodo radice osservato. Disconnette il vecchio observer, ne avvia uno nuovo (anche se
+                  l'adapter era partito con <code>root: null</code>) e azzera <code>hover</code> se non cade dentro il
+                  nuovo <code>root</code>. Con <code>null</code> ferma l'osservazione.</td>
+              </tr>
+              <tr>
+                <td><code>pump()</code></td>
+                <td>Esegue un campionamento e ridisegna l'overlay. Utile se hai impostato <code>autoTick: false</code>.
+                </td>
+              </tr>
+              <tr>
+                <td><code>snapshot()</code></td>
+                <td>Restituisce le righe per il report (<kbd>F8</kbd>). Vale <code>null</code> quando l'adapter è
+                  staccato.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Le proprietà pubbliche principali sono <code>root</code>, <code>watch</code>, <code>hover</code>,
+          <code>frozen</code> e <code>timeScale</code>.</p>
+
+        <h2 id="report">Nel report (<kbd>F8</kbd>)</h2>
+        <p>Il report (<kbd>F8</kbd> o <code>bee.exportReport()</code>) include una sezione <code>dom</code> generata da
+          <code>snapshot()</code>. Gli elementi nascosti (<code>display: none</code>, <code>visibility: hidden</code>),
+          la barra admin di WordPress (<code>#wpadminbar</code>) e l'interfaccia di BeeLadybug vengono esclusi
+          automaticamente.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Regola (<code>rule</code>)</th>
+                <th>Gravità</th>
+                <th>Contenuto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>box</code></td>
+                <td><code>ok</code></td>
+                <td>Box model completo del nodo in <code>hover</code> e dei nodi in <code>watch</code>:
+                  <code>border WxH margin T,R,B,L padding T,R,B,L content WxH display</code>.</td>
+              </tr>
+              <tr>
+                <td><code>negative margin</code></td>
+                <td><code>warn</code></td>
+                <td>Nodi dentro <code>root</code> con almeno un margine negativo (es. <code>0,0,0,-12</code>).</td>
+              </tr>
+              <tr>
+                <td><code>clipped</code></td>
+                <td><code>warn</code></td>
+                <td>Nodi il cui contenuto eccede il box di oltre 2&nbsp;px:
+                  <code>scroll SWxSH client CWxCH</code>.</td>
+              </tr>
+              <tr>
+                <td><code>collapsed content</code></td>
+                <td><code>warn</code></td>
+                <td>Nodi con bordo visibile (<code>w &gt; 0</code> e <code>h &gt; 0</code>) ma area <code>content</code>
+                  schiacciata a 0 su larghezza o altezza.</td>
+              </tr>
+              <tr>
+                <td><code>mutations</code></td>
+                <td><code>warn</code> se &gt; 0, altrimenti <code>ok</code></td>
+                <td>Conteggio dell'ultima raffica (o di quella in attesa di flush):
+                  <code>+added -removed attr N</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Per non appesantire il report su pagine molto grandi, le righe di problemi (<code>negative margin</code>,
+          <code>clipped</code>, <code>collapsed content</code>) sono limitate a un massimo di <strong>40</strong>.</p>
+
+        <section class="bld-try" id="prova">
+          <h3>▶ Prova in console</h3>
+          <p>Apri una pagina qualsiasi, premi <kbd>F12</kbd> e incolla (se Chrome blocca l'incolla, scrivi
+            <code>allow pasting</code> e riprova). Lo snippet carica <code>bee-ladybug@0.6.3</code> dalla CDN e attiva
+            <code>WebDOMAdapter</code> sul <code>body</code> mettendo in <code>watch</code> i titoli e i pulsanti.</p>
+          <div class="bld-code">
+            <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
+            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.3/src/index.js'</span>)
+  .<span class="f">then</span>(({ BeeLadybugCore, WebDOMAdapter }) =&gt; {
+    <span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>();
+    <span class="k">const</span> dom = <span class="k">new</span> <span class="f">WebDOMAdapter</span>(bee, {
+      root: document.body,
+      watch: [<span class="s">'h1'</span>, <span class="s">'h2'</span>, <span class="s">'button'</span>]
+    });
+    dom.<span class="f">attach</span>();
+    Object.<span class="f">assign</span>(window, { bee, dom });
+  });</code></pre>
+          </div>
+          <p>Muovi il mouse sulla pagina per vedere margin, padding e content colorati sotto il puntatore. Poi prova a
+            generare una mutazione dalla console:</p>
+          <div class="bld-code">
+            <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
+            <pre><code>document.body.dataset.test = <span class="s">'1'</span></code></pre>
+          </div>
+          <p style="margin:0">Nel pannello compare <code>mutate attr 1</code>. Premi <kbd>F4</kbd> per congelare il box
+            model sull'elemento corrente, <kbd>F2</kbd> per nascondere overlay e contorni, <kbd>F8</kbd> per scaricare il
+            report con la sezione <code>dom</code>.</p>
+        </section>
+
+        <nav class="bld-pager" aria-label="Navigazione pagine">
+          <a href="#/bee-ladybug/adapter/canvas/"><small>Precedente</small>← CanvasAdapter</a>
+          <a class="next" href="#/bee-ladybug/adapter/css-hunt/"><small>Successivo</small>CSSAdapter →</a>
+        </nav>
+      </main>
+
+      <aside class="bld-toc">
+        <p>In questa pagina</p>
+        <ul>
+          <li><a href="#uso">Uso base</a></li>
+          <li><a href="#opzioni">Opzioni</a></li>
+          <li><a href="#hover">Hover, watch e overlay</a></li>
+          <li><a href="#mutazioni">Mutazioni e rumore</a></li>
+          <li><a href="#pacchetti">Cosa invia al Core</a></li>
+          <li><a href="#tempo">Freeze e slow</a></li>
+          <li><a href="#api">Metodi</a></li>
+          <li><a href="#report">Nel report (F8)</a></li>
+          <li><a href="#prova">Prova in console</a></li>
+        </ul>
+      </aside>
+    </div>
+    <script>
+      (function () {
+        var root = document.currentScript.closest('.bld-docs');
+        root.querySelectorAll('.bld-copy').forEach(function (b) {
+          b.addEventListener('click', function () {
+            var t = b.closest('.bld-code').querySelector('pre').innerText;
+            navigator.clipboard.writeText(t).then(function () {
+              b.textContent = 'Copiato ✓'; b.classList.add('ok');
+              setTimeout(function () { b.textContent = 'Copia'; b.classList.remove('ok') }, 1600)
+            });
+          });
+        });
+        var links = root.querySelectorAll('.bld-toc a');
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (es) {
+            es.forEach(function (e) {
+              if (e.isIntersecting) {
+                links.forEach(function (l) { l.classList.toggle('is-on', l.getAttribute('href') === '#' + e.target.id) })
+              }
+            })
+          }, { rootMargin: '-20% 0px -70% 0px' });
+          root.querySelectorAll('h2[id],section[id]').forEach(function (h) { io.observe(h) });
+        }
+      })();
+    </script>
+  </div>
+
+</html>

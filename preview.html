@@ -714,7 +714,7 @@
         <li><a href="#/bee-ladybug/api/">API</a></li>
         <li><a href="#/bee-ladybug/risorse/">Risorse</a></li>
       </ul>
-      <span class="bld-ver">v0.6.2</span>
+      <span class="bld-ver">v0.6.3</span>
     </nav>
 
     <div class="bld-wrap">
@@ -853,7 +853,7 @@ bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <sp
         <section class="bld-try" id="prova">
           <h3>▶ Prova in console</h3>
           <p>Puoi provare BeeLadybug su una pagina vera, senza installare niente. Il codice qui sotto carica la versione
-            0.6.2 dalla CDN e la attiva sulla pagina.</p>
+            0.6.3 dalla CDN e la attiva sulla pagina.</p>
           <p><strong>1.</strong> Apri il tuo sito. Alcuni siti bloccano gli script esterni: se il codice non parte,
             prova
             su un altro sito.</p>
@@ -863,7 +863,7 @@ bee.<span class="f">sendData</span>(<span class="s">'metric'</span>, { name: <sp
           </p>
           <div class="bld-code">
             <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
-            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.2/src/index.js'</span>)
+            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.3/src/index.js'</span>)
   .<span class="f">then</span>(({ BeeLadybugCore, WebDOMAdapter, CSSAdapter }) =&gt; {
     const bee = new <span class="f">BeeLadybugCore</span>();
     new <span class="f">WebDOMAdapter</span>(bee, { root: document.body }).<span class="f">attach</span>();
