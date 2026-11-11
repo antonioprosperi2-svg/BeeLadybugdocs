@@ -1,0 +1,1185 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CSSAdapter: CSS hunt, !important, overflow e stacking context | Docs</title>
+  <!--
+  SEO suggerito (Yoast/RankMath):
+  Title: CSSAdapter: CSS hunt, !important, overflow e stacking context | Docs
+  Meta description: CSSAdapter di BeeLadybug 0.6.4: caccia CSS con F6, scansione pagina con S, pin con P. Rileva overflow viewport, click bloccati, z-index intrappolati, testo invisibile, immagini distorte e !important.
+  Slug: /ladybug/adapter/css-hunt/
+
+  VERSIONE ALL-IN-ONE: CSS e JS già inclusi, incolla tutto in un solo blocco HTML personalizzato.
+  Stesse classi della pagina Inizia (.bld-docs, .bld-code, .bld-copy, kbd, span.f / span.s).
+-->
+  <style>
+    /* BeeLadybug Docs — foglio condiviso. Tutto sotto .bld-docs */
+    body:has(.bld-docs) {
+      background: #0b0b0d !important;
+      padding-top: 58px !important;
+      overflow-x: clip
+    }
+
+    body:has(.bld-docs) #masthead,
+    body:has(.bld-docs) .entry-header {
+      display: none !important
+    }
+
+    body:has(.bld-docs) .site.grid-container,
+    body:has(.bld-docs) .site-content,
+    body:has(.bld-docs) .content-area,
+    body:has(.bld-docs) .site-main,
+    body:has(.bld-docs) .inside-article,
+    body:has(.bld-docs) .entry-content {
+      max-width: none !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      border: 0 !important
+    }
+
+    .bld-docs {
+      --bg: #0b0b0d;
+      --panel: #141418;
+      --line: #26262c;
+      --red: #E63946;
+      --red2: #ff5c69;
+      --cyan: #22d3ee;
+      --amber: #f5a524;
+      --txt: #e8e8ec;
+      --mut: #9a9aa6;
+      background: var(--bg);
+      color: var(--txt);
+      font: 16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background-image: radial-gradient(rgba(255, 255, 255, .035) 1.5px, transparent 1.6px);
+      background-size: 22px 22px;
+      border-radius: 0;
+      overflow-x: clip
+    }
+
+    .bld-docs * {
+      box-sizing: border-box
+    }
+
+    .bld-docs a {
+      color: var(--red2);
+      text-decoration: none
+    }
+
+    .bld-docs a:hover {
+      text-decoration: underline
+    }
+
+    .bld-docs code {
+      font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+      font-size: .88em
+    }
+
+    .bld-docs :not(pre)>code {
+      background: #1d1d23;
+      color: var(--cyan);
+      padding: .1em .4em;
+      border-radius: 5px
+    }
+
+    .bld-docs .bld-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      padding: 14px 32px;
+      background: rgba(11, 11, 13, .92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .admin-bar .bld-docs .bld-nav {
+      top: 32px
+    }
+
+    @media screen and (max-width:782px) {
+      .admin-bar .bld-docs .bld-nav {
+        top: 46px
+      }
+    }
+
+    .bld-docs .bld-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--txt);
+      letter-spacing: .2px
+    }
+
+    .bld-docs .bld-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--red);
+      position: relative;
+      box-shadow: 0 0 14px rgba(230, 57, 70, .5)
+    }
+
+    .bld-docs .bld-dot:before,
+    .bld-docs .bld-dot:after {
+      content: "";
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: #000;
+      border-radius: 50%;
+      top: 6px;
+      left: 5px;
+      box-shadow: 7px 0 #000, 3px 6px #000
+    }
+
+    .bld-docs .bld-dot:after {
+      width: 1.5px;
+      height: 22px;
+      top: 0;
+      left: 10px;
+      border-radius: 0;
+      box-shadow: none
+    }
+
+    .bld-docs .bld-nav ul {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap
+    }
+
+    .bld-docs .bld-nav li a {
+      display: block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      color: var(--mut);
+      font-weight: 600;
+      font-size: 14px
+    }
+
+    .bld-docs .bld-nav li a:hover {
+      color: var(--txt);
+      background: #1b1b20;
+      text-decoration: none
+    }
+
+    .bld-docs .bld-nav li a.is-active {
+      color: #fff;
+      background: #C1121F;
+    }
+
+
+
+    .bld-docs .bld-ver {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--cyan);
+      border: 1px solid #164e5a;
+      padding: 3px 10px;
+      border-radius: 999px
+    }
+
+    .bld-docs .bld-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 48px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 32px 56px
+    }
+
+    .bld-docs .bld-hero {
+      padding: 8px 0 24px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 12px
+    }
+
+    .bld-docs .bld-eyebrow {
+      color: var(--red2);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase
+    }
+
+    .bld-docs h1 {
+      font-size: 44px;
+      line-height: 1.1;
+      margin: 10px 0 14px;
+      letter-spacing: -.8px
+    }
+
+    .bld-docs h1 span {
+      color: var(--red)
+    }
+
+    .bld-docs .bld-lead {
+      font-size: 19px;
+      color: #c9c9d2;
+      max-width: 680px;
+      margin: 0
+    }
+
+    .bld-docs blockquote {
+      margin: 20px 0 0;
+      padding: 12px 18px;
+      border-left: 3px solid var(--red);
+      background: #16161b;
+      color: var(--mut);
+      border-radius: 0 8px 8px 0;
+      font-style: italic
+    }
+
+    .bld-docs h2 {
+      font-size: 26px;
+      margin: 44px 0 12px;
+      scroll-margin-top: 80px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .bld-docs h2:before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 0 4px rgba(230, 57, 70, .15)
+    }
+
+    .bld-docs h3 {
+      font-size: 18px;
+      margin: 26px 0 8px;
+      color: #f2f2f5
+    }
+
+    .bld-docs p {
+      color: #cfcfd8
+    }
+
+    .bld-docs .bld-code {
+      position: relative;
+      margin: 14px 0 20px;
+      background: #08090b;
+      border: 1px solid #1c2a2f;
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    .bld-docs .bld-code-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 12px;
+      background: #0f1417;
+      border-bottom: 1px solid #1c2a2f;
+      font-size: 12px;
+      color: #6fb9c7;
+      font-family: ui-monospace, Menlo, monospace
+    }
+
+    .bld-docs .bld-copy {
+      background: transparent;
+      border: 1px solid #23414a;
+      color: var(--cyan);
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer
+    }
+
+    .bld-docs .bld-copy:hover {
+      background: #0f2a31
+    }
+
+    .bld-docs .bld-copy.ok {
+      border-color: var(--red);
+      color: var(--red2)
+    }
+
+    .bld-docs pre {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      color: #d6f6fb;
+      line-height: 1.55
+    }
+
+    .bld-docs .k {
+      color: var(--red2)
+    }
+
+    .bld-docs .s {
+      color: #a7f3d0
+    }
+
+    .bld-docs .c {
+      color: #5b6b72;
+      font-style: italic
+    }
+
+    .bld-docs .f {
+      color: var(--cyan)
+    }
+
+    .bld-docs table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 15px;
+      background: var(--panel);
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    .bld-docs th,
+    .bld-docs td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .bld-docs th {
+      background: #1a1a20;
+      color: var(--mut);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px
+    }
+
+    .bld-docs kbd {
+      display: inline-block;
+      min-width: 34px;
+      text-align: center;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: #1f1f25;
+      border: 1px solid #33333c;
+      border-bottom-width: 3px;
+      font: 600 13px ui-monospace, monospace;
+      color: #fff
+    }
+
+    .bld-docs .bld-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 16px 0
+    }
+
+    .bld-docs .bld-card {
+      display: block;
+      padding: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--txt);
+      transition: .15s
+    }
+
+    .bld-docs .bld-card:hover {
+      border-color: var(--red);
+      transform: translateY(-2px);
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(230, 57, 70, .12)
+    }
+
+    .bld-docs .bld-card b {
+      display: block;
+      font-size: 16px;
+      margin: 8px 0 4px
+    }
+
+    .bld-docs .bld-card small {
+      color: var(--mut);
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: block
+    }
+
+    .bld-docs .bld-ico {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: rgba(230, 57, 70, .12);
+      color: var(--red2);
+      font-size: 17px
+    }
+
+    .bld-docs .bld-badge {
+      display: inline-block;
+      font: 600 11px ui-monospace, monospace;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #0f2a31;
+      color: var(--cyan);
+      margin-right: 4px
+    }
+
+    .bld-docs .bld-badge.warn {
+      background: #2e2108;
+      color: var(--amber)
+    }
+
+    .bld-docs .bld-badge.err {
+      background: #2e0e12;
+      color: var(--red2)
+    }
+
+    .bld-docs .bld-try {
+      margin: 24px 0;
+      padding: 20px 22px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(34, 211, 238, .08), rgba(230, 57, 70, .08));
+      border: 1px solid #1f3a40
+    }
+
+    .bld-docs .bld-try h3 {
+      margin-top: 0;
+      color: var(--cyan)
+    }
+
+    .bld-docs .bld-note {
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: #1a1410;
+      border: 1px solid #3a2a12;
+      color: #e9c98c;
+      font-size: 14.5px
+    }
+
+    .bld-docs .bld-toc {
+      position: sticky;
+      top: 84px;
+      align-self: start;
+      font-size: 14px
+    }
+
+    .bld-docs .bld-toc p {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--mut);
+      margin: 0 0 10px;
+      font-weight: 700
+    }
+
+    .bld-docs .bld-toc ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-left: 1px solid var(--line)
+    }
+
+    .bld-docs .bld-toc a {
+      display: block;
+      padding: 5px 14px;
+      color: var(--mut);
+      margin-left: -1px;
+      border-left: 2px solid transparent
+    }
+
+    .bld-docs .bld-toc a:hover,
+    .bld-docs .bld-toc a.is-on {
+      color: var(--txt);
+      border-left-color: var(--red);
+      text-decoration: none
+    }
+
+    .bld-docs .bld-pager {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line)
+    }
+
+    .bld-docs .bld-pager a {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--txt)
+    }
+
+    .bld-docs .bld-pager a:hover {
+      border-color: var(--red);
+      text-decoration: none
+    }
+
+    .bld-docs .bld-pager small {
+      display: block;
+      color: var(--mut);
+      font-size: 12px
+    }
+
+    .bld-docs .bld-pager .next {
+      text-align: right;
+      grid-column: 2
+    }
+
+    .bld-docs .bld-pager .is-off {
+      opacity: .4;
+      pointer-events: none
+    }
+
+    @media(max-width:960px) {
+      .bld-docs .bld-wrap {
+        grid-template-columns: 1fr
+      }
+
+      .bld-docs .bld-toc {
+        display: none
+      }
+    }
+
+    @media(max-width:640px) {
+      .bld-docs .bld-nav {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 16px
+      }
+
+      .bld-docs .bld-nav ul {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        width: 100%
+      }
+
+      .bld-docs .bld-ver {
+        display: none
+      }
+
+      .bld-docs .bld-wrap {
+        padding: 28px 16px
+      }
+
+      .bld-docs h1 {
+        font-size: 32px
+      }
+
+      .bld-docs .bld-lead {
+        font-size: 17px
+      }
+
+      .bld-docs table {
+        font-size: 13.5px
+      }
+
+      .bld-docs th,
+      .bld-docs td {
+        padding: 8px
+      }
+
+      .bld-docs .bld-pager {
+        grid-template-columns: 1fr
+      }
+
+      .bld-docs .bld-pager .next {
+        grid-column: 1
+      }
+    }
+
+    /* ===== Mobile / WordPress hardening ===== */
+    .bld-docs {
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+      width: 100%;
+      overflow-x: clip !important
+    }
+
+    .bld-docs *,
+    .bld-docs *:before,
+    .bld-docs *:after {
+      box-sizing: border-box !important;
+      max-width: 100%
+    }
+
+    .bld-docs .bld-wrap>*,
+    .bld-docs main,
+    .bld-docs .bld-card,
+    .bld-docs .bld-cards>*,
+    .bld-docs .bld-pager>*,
+    .bld-docs .bld-nav>* {
+      min-width: 0
+    }
+
+    .bld-docs .bld-code {
+      max-width: 100% !important;
+      min-width: 0
+    }
+
+    .bld-docs pre {
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100% !important;
+      white-space: pre !important;
+      word-wrap: normal !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      background: transparent !important;
+      border: 0 !important;
+      margin: 0 !important;
+      padding: 14px 16px !important;
+      font-size: 13.5px !important;
+      color: #d6f6fb !important
+    }
+
+    .bld-docs pre code {
+      white-space: pre !important;
+      background: transparent !important;
+      padding: 0 !important;
+      color: inherit !important;
+      word-break: normal !important;
+      overflow-wrap: normal !important;
+      display: block;
+      max-width: none
+    }
+
+    .bld-docs :not(pre)>code {
+      overflow-wrap: anywhere !important;
+      word-break: break-word !important;
+      white-space: normal !important
+    }
+
+    .bld-docs .bld-table {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100%;
+      margin: 14px 0
+    }
+
+    .bld-docs .bld-table table {
+      margin: 0;
+      min-width: 420px
+    }
+
+    .bld-docs p,
+    .bld-docs li,
+    .bld-docs h1,
+    .bld-docs h2,
+    .bld-docs h3 {
+      overflow-wrap: break-word
+    }
+
+    .bld-docs a.soon {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .bld-docs a[href="##"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+  </style>
+  <div class="bld-docs">
+    <nav class="bld-nav" aria-label="Documentazione BeeLadybug">
+      <a class="bld-logo" href="https://antonioprosperi2-svg.github.io/BeeLadybug-universal/"><span
+          class="bld-dot"></span>BeeLadybug <span style="color:var(--mut);font-weight:500">docs</span></a>
+      <ul>
+        <li><a href="https://beeenginejs.com/ladybug/inizia/">Inizia</a></li>
+        <li><a href="https://beeenginejs.com/ladybug/concetti/">Concetti</a></li>
+        <li><a class="is-active" href="#/bee-ladybug/adapter/" aria-current="page">Adapter</a></li>
+        <li><a href="#/bee-ladybug/api/">API</a></li>
+        <li><a href="#/bee-ladybug/risorse/">Risorse</a></li>
+      </ul>
+      <span class="bld-ver">v0.6.4</span>
+    </nav>
+
+    <div class="bld-wrap">
+      <main>
+        <header class="bld-hero">
+          <div class="bld-eyebrow">Adapter</div>
+          <h1>CSS<span>Adapter</span></h1>
+          <p class="bld-lead">La caccia ai bug CSS (<kbd>F6</kbd>). Passa il mouse su un elemento o premi <kbd>S</kbd>
+            per trovare sforamenti del viewport, click bloccati da overlay o pseudo-elementi, <code>z-index</code>
+            intrappolati in uno stacking context, testo invisibile, immagini deformate e regole
+            <code>!important</code>.</p>
+          <blockquote>Il Core non legge un solo foglio di stile. Riceve solo pacchetti, righe cliccabili e cause
+            raggruppate.</blockquote>
+        </header>
+
+        <h2 id="uso">Uso base</h2>
+        <p>A differenza di <code>WebDOMAdapter</code>, <code>CSSAdapter</code> si registra sul Core <strong>spento di
+            default</strong> (<code>enabled: false</code>), così non tocca la pagina finché non premi <kbd>F6</kbd> o il
+          pulsante <strong>F6 CSS</strong> nell'overlay.</p>
+        <div class="bld-code">
+          <div class="bld-code-head">app.js<button class="bld-copy">Copia</button></div>
+          <pre><code><span class="k">import</span> { BeeLadybugCore, CSSAdapter } <span class="k">from</span> <span class="s">'bee-ladybug'</span>;
+
+<span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>();
+<span class="k">const</span> css = <span class="k">new</span> <span class="f">CSSAdapter</span>(bee);
+css.<span class="f">attach</span>();
+<span class="c">// Premi F6 per accendere la caccia, S per scansionare la pagina, P per bloccare il pannello.</span></code></pre>
+        </div>
+        <p>Puoi accenderla anche da codice con <code>bee.toggleAdapter('css')</code> o
+          <code>bee.setAdapterEnabled('css', true)</code>. Senza bundler, nell'import usa il percorso
+          <code>./node_modules/bee-ladybug/src/index.js</code>, come in <a
+            href="https://beeenginejs.com/ladybug/inizia/">Inizia</a>.</p>
+
+        <h2 id="tasti">Tasti della caccia CSS</h2>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Tasto</th>
+                <th>Quando risponde</th>
+                <th>Effetto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><kbd>F6</kbd></td>
+                <td>Con overlay visibile</td>
+                <td>Accende / spegne la CSS hunt (gestito dal Core tramite l'hotkey registrato).</td>
+              </tr>
+              <tr>
+                <td><kbd>S</kbd></td>
+                <td>Con hunt accesa e overlay visibile</td>
+                <td>Scansiona tutta la pagina (<code>css.scan()</code>), sblocca un eventuale pin e mostra i primi
+                  <code>maxScan</code> gruppi in <strong>Inspect</strong>.</td>
+              </tr>
+              <tr>
+                <td><kbd>P</kbd></td>
+                <td>Con hunt accesa e overlay visibile</td>
+                <td>Blocca / sblocca il pannello sull'elemento sotto il puntatore, disegna il contorno rosso e scorre
+                  l'elemento al centro dello schermo.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="bld-note">I tasti <kbd>S</kbd> e <kbd>P</kbd> usano <code>event.code</code> (<code>KeyS</code> e
+          <code>KeyP</code>). Vengono ignorati quando scrivi in un <code>input</code>, <code>textarea</code>,
+          <code>select</code> o <code>contenteditable</code>, quando premi combinazioni col browser
+          (<kbd>Ctrl</kbd>+<kbd>S</kbd>, <kbd>Cmd</kbd>+<kbd>S</kbd>, <kbd>Ctrl</kbd>+<kbd>P</kbd>, <kbd>Alt</kbd>) e
+          quando l'overlay è nascosto con <kbd>F2</kbd>.</p>
+
+        <h2 id="controlli">Cosa rileva</h2>
+        <p>In hover (<kbd>F6</kbd>), nella scansione (<kbd>S</kbd>) e nel report (<kbd>F8</kbd>), l'adapter esegue sei
+          controlli in ordine di gravità (<code>rank</code> da <code>0</code> a <code>6</code>), saltando sempre i nodi
+          nascosti (<code>display: none</code>, <code>visibility: hidden</code>, box <code>0×0</code>), la barra
+          <code>#wpadminbar</code>, i tag <code>script</code>/<code>style</code>/<code>link</code>/<code>meta</code> e
+          l'interfaccia di BeeLadybug:</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Controllo</th>
+                <th>Livello</th>
+                <th>Come funziona</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Overflow viewport</strong></td>
+                <td><code>error</code> (rank 0)</td>
+                <td>Segnala gli elementi che escono a sinistra (<code>rect.left &lt; -1</code>) o a destra
+                  (<code>rect.right &gt; clientWidth + 1</code>). <code>keepOverflowCauses</code> scarta i genitori che
+                  fanno solo da eco a un figlio (±2&nbsp;px) o la cui larghezza ci sta nel viewport.</td>
+              </tr>
+              <tr>
+                <td><strong>Click bloccato</strong></td>
+                <td><code>error</code> (rank 1)</td>
+                <td>Controlla il centro dell'elemento con <code>document.elementFromPoint(x, y)</code> e i
+                  pseudo-elementi <code>::before</code> / <code>::after</code> fissi o assoluti su <code>html</code> e
+                  <code>body</code>. Se un altro nodo copre il punto, raggruppa per causa (es.
+                  <code>body::after blocks clicks on 10 elements</code>).</td>
+              </tr>
+              <tr>
+                <td><strong>Stacking context</strong></td>
+                <td><code>error</code> (rank 1) / <code>info</code> (rank 6)</td>
+                <td>Se un elemento ha <code>z-index</code> diverso da <code>auto</code>, risale gli antenati cercando
+                  chi crea uno stacking context (<code>transform</code>, <code>opacity &lt; 1</code>,
+                  <code>filter</code>, oppure <code>position !== 'static'</code> con <code>z-index !== 'auto'</code>) e
+                  raggruppa i figli intrappolati. <code>will-change: transform / opacity</code> viene segnalato come
+                  nota grigia (<code>info</code>), non come errore.</td>
+              </tr>
+              <tr>
+                <td><strong>Testo invisibile</strong></td>
+                <td><code>error</code> (rank 2)</td>
+                <td>Su elementi con testo proprio (o <code>button</code>, <code>a</code>, <code>label</code>,
+                  <code>input</code>, <code>textarea</code>) controlla: <code>opacity: 0</code> (anche ereditata da un
+                  antenato), colore con alpha <code>0</code> (<code>transparent</code>, <code>rgba(..., 0)</code>) e
+                  colore quasi identico allo sfondo dietro (scarto RGB &lt; 2 e alpha &lt; 0.05). Colori in sintassi non
+                  RGB (<code>oklch</code>, <code>lab</code>, <code>color()</code>, <code>color-mix()</code>) non
+                  generano falsi positivi.</td>
+              </tr>
+              <tr>
+                <td><strong>Immagine distorta</strong></td>
+                <td><code>error</code> (rank 3)</td>
+                <td>Su <code>&lt;img&gt;</code> con <code>object-fit: fill</code> (il default CSS), confronta le
+                  proporzioni del file (<code>naturalWidth / naturalHeight</code>) con quelle del box renderizzato
+                  (<code>getBoundingClientRect</code>). Segnala errore se differiscono di oltre il <strong>5%</strong>.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Regole <code>!important</code></strong></td>
+                <td><code>warn</code> (rank 4)</td>
+                <td>Legge i fogli di stile attivi in <code>document.styleSheets</code> (saltando quelli con
+                  <code>disabled === true</code> o con <code>media</code> che non corrisponde) e trova le proprietà con
+                  priorità <code>important</code> che matchano l'elemento, indicando anche il foglio sorgente.</td>
+              </tr>
+              <tr>
+                <td><strong>Margine negativo</strong></td>
+                <td><code>warn</code> (rank 5)</td>
+                <td>Segnala qualunque lato (<code>margin-top/right/bottom/left</code>) con valore finito minore di
+                  <code>0</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Un foglio di stile cross-origin che non permette la lettura di <code>cssRules</code> non viene contato come
+          errore: produce una sola nota informativa grigia (<code>unreadable sheet: …</code>) per foglio.</p>
+
+        <h2 id="opzioni">Opzioni</h2>
+        <p>I valori predefiniti sono esportati anche in <code>CSS_ADAPTER_DEFAULTS</code>.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Opzione</th>
+                <th>Default</th>
+                <th>Effetto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>source</code></td>
+                <td><code>'css'</code></td>
+                <td>Il <code>source</code> di tutti i pacchetti inviati al Core.</td>
+              </tr>
+              <tr>
+                <td><code>hotkey</code></td>
+                <td><code>'F6'</code></td>
+                <td>Tasto registrato nel Core per accendere e spegnere la caccia.</td>
+              </tr>
+              <tr>
+                <td><code>scanKey</code></td>
+                <td><code>'KeyS'</code></td>
+                <td>Codice tasto (<code>event.code</code>) per lanciare <code>scan()</code> a caccia attiva.</td>
+              </tr>
+              <tr>
+                <td><code>pinKey</code></td>
+                <td><code>'KeyP'</code></td>
+                <td>Codice tasto (<code>event.code</code>) per bloccare/sbloccare il pannello sull'elemento corrente.
+                </td>
+              </tr>
+              <tr>
+                <td><code>label</code></td>
+                <td><code>'F6 CSS'</code></td>
+                <td>Etichetta del pulsante mostrato nell'overlay.</td>
+              </tr>
+              <tr>
+                <td><code>maxScan</code></td>
+                <td><code>8</code></td>
+                <td>Numero massimo di gruppi mostrati nella sezione <strong>Inspect</strong> dopo una scansione
+                  (<kbd>S</kbd>).</td>
+              </tr>
+              <tr>
+                <td><code>issueWindow</code></td>
+                <td><code>5000</code></td>
+                <td>Finestra di deduplicazione in millisecondi: lo stesso problema sullo stesso elemento viene scritto
+                  nella lista eventi al massimo una volta ogni 5 secondi.</td>
+              </tr>
+              <tr>
+                <td><code>maxIssues</code></td>
+                <td><code>10</code></td>
+                <td>Numero massimo di cause raggruppate mantenute nella lista fissa <strong>Issues</strong>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="pannelli">Issues, Inspect e riquadri sulla pagina</h2>
+        <p>Quando la caccia è attiva, <code>CSSAdapter</code> monta due riquadri leggeri nel <code>body</code>
+          (<code>data-bee-ladybug-css="hover"</code> con bordo giallo <code>#ffd36a</code> e
+          <code>data-bee-ladybug-css="pin"</code> con bordo rosso <code>#ff3b4e</code>) in
+          <code>pointer-events: none</code>. Se nascondi l'overlay con <kbd>F2</kbd>, anche i due riquadri spariscono.
+        </p>
+        <ul>
+          <li><strong>Issues (in alto nel pannello):</strong> tiene fino a <code>maxIssues</code> cause raggruppate
+            (overflow, click bloccati, stacking context) più le note sui fogli cross-origin e <code>will-change</code>.
+            Non scorre via con la console; cliccando una causa si espandono gli elementi coinvolti e cliccandone uno
+            l'adapter ci scorre sopra e lo contorna in rosso.</li>
+          <li><strong>Inspect:</strong> mostra i dettagli dell'elemento in hover (o i primi <code>maxScan</code> gruppi
+            dopo <kbd>S</kbd>). Cliccando una riga si fissa il riquadro rosso sull'elemento.</li>
+        </ul>
+        <p>Un <code>MutationObserver</code> osserva le modifiche a <code>&lt;style&gt;</code> e
+          <code>&lt;link&gt;</code> e ricostruisce la cache delle regole <code>!important</code> solo quando cambiano i
+          fogli di stile.</p>
+
+        <h2 id="pacchetti">Cosa invia al Core</h2>
+        <p>Tutti i pacchetti portano <code>source: 'css'</code>. Il formato generale è nel
+          <a href="https://beeenginejs.com/ladybug/concetti/">contratto <code>sendData</code></a>.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Quando</th>
+                <th>Contenuto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>state</code></td>
+                <td>Accensione / spegnimento / ispezione</td>
+                <td>Quattro chiavi HUD: <code>css.hunt</code> (<code>'on'</code> / <code>'off'</code>),
+                  <code>css.target</code> (selettore o <code>'—'</code>), <code>css.hits</code> (numero problemi sul
+                  nodo, <code>'0'</code> fuori bersaglio), <code>css.pin</code> (selettore bloccato o
+                  <code>'off'</code>) e <code>css.scan</code> (numero gruppi trovati con <kbd>S</kbd>). Quando spegni la
+                  caccia, <code>css.target</code>, <code>css.hits</code> e <code>css.pin</code> vengono resettati.</td>
+              </tr>
+              <tr>
+                <td><code>error</code> / <code>warn</code></td>
+                <td>Hover su un elemento con problemi</td>
+                <td>Un pacchetto per problema (es. <code>div.hero  overflows viewport (right +120px)</code>), limitato
+                  da <code>issueWindow</code> (uno ogni 5&nbsp;s per coppia elemento/problema).</td>
+              </tr>
+              <tr>
+                <td><code>warn</code></td>
+                <td>Scansione con <kbd>S</kbd></td>
+                <td><code>scan N issue(s). Click a row to outline it.</code> (Se la pagina è pulita, invia
+                  <code>scan clean</code> solo quando è attivo <kbd>F3</kbd> SLOW).</td>
+              </tr>
+              <tr>
+                <td><code>log</code></td>
+                <td>Foglio cross-origin non leggibile</td>
+                <td><code>unreadable sheet: https://…</code> (livello <code>info</code>, una sola volta per foglio).
+                </td>
+              </tr>
+              <tr>
+                <td><code>log</code></td>
+                <td>Hover su elemento pulito con <kbd>F3</kbd> SLOW attivo</td>
+                <td><code>div.card  clean</code> (a velocità normale resta silenzioso).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="api">Metodi e proprietà</h2>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Membro</th>
+                <th>Cosa fa</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>attach()</code></td>
+                <td>Si registra nel Core come <code>css</code> (etichetta <code>F6 CSS</code>, hotkey <code>F6</code>,
+                  <code>enabled: false</code>) e ascolta la visibilità dell'overlay. Restituisce <code>this</code>.</td>
+              </tr>
+              <tr>
+                <td><code>detach()</code></td>
+                <td>Spegne la caccia se attiva, smonta i riquadri, pulisce Issues/Inspect e rimuove la registrazione dal
+                  Core. Restituisce <code>this</code>.</td>
+              </tr>
+              <tr>
+                <td><code>scan()</code></td>
+                <td>Esegue la scansione dell'intera pagina quando la caccia è attiva (equivale a premere <kbd>S</kbd>).
+                  Se la caccia è spenta non fa nulla. Restituisce <code>this</code>.</td>
+              </tr>
+              <tr>
+                <td><code>snapshot()</code></td>
+                <td>Esegue una scansione completa e silenziosa per il report (<kbd>F8</kbd>), <strong>anche con la
+                    caccia spenta</strong>, senza toccare log, pin o pannelli. Restituisce fino a <strong>80</strong>
+                  righe ordinate per gravità (<code>error</code> → <code>warn</code> → <code>ok</code>), oppure
+                  <code>null</code> se l'adapter non è attaccato.</td>
+              </tr>
+              <tr>
+                <td><code>css.active</code></td>
+                <td>Getter booleano: <code>true</code> mentre la caccia CSS (<kbd>F6</kbd>) è accesa.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="report">Nel report (<kbd>F8</kbd>)</h2>
+        <p>Quando premi <kbd>F8</kbd> o chiami <code>bee.exportReport()</code>, <code>snapshot()</code> popola la
+          sezione <code>css</code> del report anche se non hai mai acceso <kbd>F6</kbd>. Le cause vengono prima
+          raggruppate tutte e solo dopo l'ordinamento per gravità vengono tagliate al limite di <strong>80
+            righe</strong>, così le note informative (<code>will-change</code>, <code>unreadable sheet</code>) non
+          possono mai far scartare un errore reale.</p>
+        <div class="bld-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Regola (<code>rule</code>)</th>
+                <th>Gravità</th>
+                <th>Esempio di valore</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>overflow</code></td>
+                <td><code>error</code></td>
+                <td><code>article#bleed overflows viewport</code></td>
+              </tr>
+              <tr>
+                <td><code>click blocked</code></td>
+                <td><code>error</code></td>
+                <td><code>div#mask blocks clicks on 2 elements</code></td>
+              </tr>
+              <tr>
+                <td><code>stacking context</code></td>
+                <td><code>error</code></td>
+                <td><code>div#hero creates stacking context (transform) - z-index of 1 child is trapped</code></td>
+              </tr>
+              <tr>
+                <td><code>invisible text</code></td>
+                <td><code>error</code></td>
+                <td><code>invisible text (color matches background)</code></td>
+              </tr>
+              <tr>
+                <td><code>distorted image</code></td>
+                <td><code>error</code></td>
+                <td><code>distorted image 33% (object-fit: fill)</code></td>
+              </tr>
+              <tr>
+                <td><code>!important</code></td>
+                <td><code>warn</code></td>
+                <td><code>!important .hot { color: red } ×2</code></td>
+              </tr>
+              <tr>
+                <td><code>negative margin</code></td>
+                <td><code>warn</code></td>
+                <td><code>negative margin margin-left: -8px</code></td>
+              </tr>
+              <tr>
+                <td><code>will-change</code></td>
+                <td><code>ok</code></td>
+                <td><code>div#hint will-change: opacity — z-index of 1 child stays in this layer</code></td>
+              </tr>
+              <tr>
+                <td><code>unreadable sheet</code></td>
+                <td><code>ok</code></td>
+                <td><code>https://cdn.example.com/app.css</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="limiti">Limiti</h2>
+        <ul>
+          <li><strong> Proprietà abbreviate con <code>!important</code>:</strong> il CSSOM del browser espande le
+            shorthand (es. <code>margin: 0 !important</code>) nelle singole proprietà longhand
+            (<code>margin-top</code>, <code>margin-right</code>, <code>margin-bottom</code>, <code>margin-left</code>),
+            quindi ognuna produce una propria voce.</li>
+          <li><strong>Contenitori con <code>overflow: hidden / auto</code>:</strong> lo sforamento è misurato rispetto
+            alla larghezza del viewport (<code>documentElement.clientWidth</code>); elementi posizionati fuori schermo
+            dentro un carosello o un drawer chiuso possono comparire tra gli overflow.</li>
+          <li><strong>Blocco del click al centro:</strong> <code>pushBlockers</code> campiona il punto centrale del
+            rettangolo dell'elemento e i pseudo-elementi <code>::before</code> / <code>::after</code> su
+            <code>html</code> e <code>body</code>.</li>
+          <li><strong>Sfondi complessi:</strong> il confronto di contrasto (<code>paintBehind</code>) legge
+            <code>backgroundColor</code> lungo gli antenati; non valuta immagini di sfondo o gradienti CSS.</li>
+        </ul>
+
+        <section class="bld-try" id="prova">
+          <h3>▶ Prova in console</h3>
+          <p>Apri una pagina qualsiasi, premi <kbd>F12</kbd> e incolla (se Chrome blocca l'incolla, scrivi
+            <code>allow pasting</code> e riprova). Lo snippet carica <code>bee-ladybug@0.6.4</code> dalla CDN, attacca
+            <code>CSSAdapter</code>, accende subito la caccia CSS e lancia una scansione della pagina:</p>
+          <div class="bld-code">
+            <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
+            <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.4/src/index.js'</span>)
+  .<span class="f">then</span>(({ BeeLadybugCore, CSSAdapter }) =&gt; {
+    <span class="k">const</span> bee = <span class="k">new</span> <span class="f">BeeLadybugCore</span>();
+    <span class="k">const</span> css = <span class="k">new</span> <span class="f">CSSAdapter</span>(bee);
+    css.<span class="f">attach</span>();
+    bee.<span class="f">toggleAdapter</span>(<span class="s">'css'</span>);
+    css.<span class="f">scan</span>();
+    Object.<span class="f">assign</span>(window, { bee, css });
+  });</code></pre>
+          </div>
+          <p style="margin:0">Nel pannello si popolano subito <strong>Issues</strong> e <strong>Inspect</strong>: clicca
+            una riga per scorrere sull'elemento e contornarlo in rosso. Muovi il mouse per ispezionare i nodi dal vivo,
+            premi <kbd>P</kbd> per fissare il pannello, <kbd>S</kbd> per riscansionare, <kbd>F6</kbd> per spegnere la
+            caccia e <kbd>F8</kbd> per scaricare il report.</p>
+        </section>
+
+        <nav class="bld-pager" aria-label="Navigazione pagine">
+          <a href="#/bee-ladybug/adapter/webdom/"><small>Precedente</small>← WebDOMAdapter</a>
+          <a class="next" href="#/bee-ladybug/adapter/ant/"><small>Successivo</small>AntAdapter →</a>
+        </nav>
+      </main>
+
+      <aside class="bld-toc">
+        <p>In questa pagina</p>
+        <ul>
+          <li><a href="#uso">Uso base</a></li>
+          <li><a href="#tasti">Tasti della caccia</a></li>
+          <li><a href="#controlli">Cosa rileva</a></li>
+          <li><a href="#opzioni">Opzioni</a></li>
+          <li><a href="#pannelli">Issues e Inspect</a></li>
+          <li><a href="#pacchetti">Cosa invia al Core</a></li>
+          <li><a href="#api">Metodi e proprietà</a></li>
+          <li><a href="#report">Nel report (F8)</a></li>
+          <li><a href="#limiti">Limiti</a></li>
+          <li><a href="#prova">Prova in console</a></li>
+        </ul>
+      </aside>
+    </div>
+    <script>
+      (function () {
+        var root = document.currentScript.closest('.bld-docs');
+        root.querySelectorAll('.bld-copy').forEach(function (b) {
+          b.addEventListener('click', function () {
+            var t = b.closest('.bld-code').querySelector('pre').innerText;
+            navigator.clipboard.writeText(t).then(function () {
+              b.textContent = 'Copiato ✓'; b.classList.add('ok');
+              setTimeout(function () { b.textContent = 'Copia'; b.classList.remove('ok') }, 1600)
+            });
+          });
+        });
+        var links = root.querySelectorAll('.bld-toc a');
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (es) {
+            es.forEach(function (e) {
+              if (e.isIntersecting) {
+                links.forEach(function (l) { l.classList.toggle('is-on', l.getAttribute('href') === '#' + e.target.id) })
+              }
+            })
+          }, { rootMargin: '-20% 0px -70% 0px' });
+          root.querySelectorAll('h2[id],section[id]').forEach(function (h) { io.observe(h) });
+        }
+      })();
+    </script>
+  </div>
+
+</html>
