@@ -564,7 +564,12 @@
       }
 
       .bld-docs .bld-ver {
-        display: none
+        order: 1;
+        margin-left: auto
+      }
+
+      .bld-docs .bld-nav ul {
+        order: 2
       }
 
       .bld-docs .bld-wrap {
@@ -726,7 +731,8 @@
           <p class="bld-lead">La caccia ai bug CSS (<kbd>F6</kbd>). Passa il mouse su un elemento o premi <kbd>S</kbd>
             per trovare sforamenti del viewport, click bloccati da overlay o pseudo-elementi, <code>z-index</code>
             intrappolati in uno stacking context, testo invisibile, immagini deformate e regole
-            <code>!important</code>.</p>
+            <code>!important</code>.
+          </p>
           <blockquote>Il Core non legge un solo foglio di stile. Riceve solo pacchetti, righe cliccabili e cause
             raggruppate.</blockquote>
         </header>
@@ -747,7 +753,8 @@ css.<span class="f">attach</span>();
         <p>Puoi accenderla anche da codice con <code>bee.toggleAdapter('css')</code> o
           <code>bee.setAdapterEnabled('css', true)</code>. Senza bundler, nell'import usa il percorso
           <code>./node_modules/bee-ladybug/src/index.js</code>, come in <a
-            href="https://beeenginejs.com/ladybug/inizia/">Inizia</a>.</p>
+            href="https://beeenginejs.com/ladybug/inizia/">Inizia</a>.
+        </p>
 
         <h2 id="tasti">Tasti della caccia CSS</h2>
         <div class="bld-table">
@@ -769,7 +776,8 @@ css.<span class="f">attach</span>();
                 <td><kbd>S</kbd></td>
                 <td>Con hunt accesa e overlay visibile</td>
                 <td>Scansiona tutta la pagina (<code>css.scan()</code>), sblocca un eventuale pin e mostra i primi
-                  <code>maxScan</code> gruppi in <strong>Inspect</strong>.</td>
+                  <code>maxScan</code> gruppi in <strong>Inspect</strong>.
+                </td>
               </tr>
               <tr>
                 <td><kbd>P</kbd></td>
@@ -784,14 +792,16 @@ css.<span class="f">attach</span>();
           <code>KeyP</code>). Vengono ignorati quando scrivi in un <code>input</code>, <code>textarea</code>,
           <code>select</code> o <code>contenteditable</code>, quando premi combinazioni col browser
           (<kbd>Ctrl</kbd>+<kbd>S</kbd>, <kbd>Cmd</kbd>+<kbd>S</kbd>, <kbd>Ctrl</kbd>+<kbd>P</kbd>, <kbd>Alt</kbd>) e
-          quando l'overlay è nascosto con <kbd>F2</kbd>.</p>
+          quando l'overlay è nascosto con <kbd>F2</kbd>.
+        </p>
 
         <h2 id="controlli">Cosa rileva</h2>
         <p>In hover (<kbd>F6</kbd>), nella scansione (<kbd>S</kbd>) e nel report (<kbd>F8</kbd>), l'adapter esegue sei
           controlli in ordine di gravità (<code>rank</code> da <code>0</code> a <code>6</code>), saltando sempre i nodi
           nascosti (<code>display: none</code>, <code>visibility: hidden</code>, box <code>0×0</code>), la barra
           <code>#wpadminbar</code>, i tag <code>script</code>/<code>style</code>/<code>link</code>/<code>meta</code> e
-          l'interfaccia di BeeLadybug:</p>
+          l'interfaccia di BeeLadybug:
+        </p>
         <div class="bld-table">
           <table>
             <thead>
@@ -815,7 +825,8 @@ css.<span class="f">attach</span>();
                 <td>Controlla il centro dell'elemento con <code>document.elementFromPoint(x, y)</code> e i
                   pseudo-elementi <code>::before</code> / <code>::after</code> fissi o assoluti su <code>html</code> e
                   <code>body</code>. Se un altro nodo copre il punto, raggruppa per causa (es.
-                  <code>body::after blocks clicks on 10 elements</code>).</td>
+                  <code>body::after blocks clicks on 10 elements</code>).
+                </td>
               </tr>
               <tr>
                 <td><strong>Stacking context</strong></td>
@@ -824,7 +835,8 @@ css.<span class="f">attach</span>();
                   chi crea uno stacking context (<code>transform</code>, <code>opacity &lt; 1</code>,
                   <code>filter</code>, oppure <code>position !== 'static'</code> con <code>z-index !== 'auto'</code>) e
                   raggruppa i figli intrappolati. <code>will-change: transform / opacity</code> viene segnalato come
-                  nota grigia (<code>info</code>), non come errore.</td>
+                  nota grigia (<code>info</code>), non come errore.
+                </td>
               </tr>
               <tr>
                 <td><strong>Testo invisibile</strong></td>
@@ -834,7 +846,8 @@ css.<span class="f">attach</span>();
                   antenato), colore con alpha <code>0</code> (<code>transparent</code>, <code>rgba(..., 0)</code>) e
                   colore quasi identico allo sfondo dietro (scarto RGB &lt; 2 e alpha &lt; 0.05). Colori in sintassi non
                   RGB (<code>oklch</code>, <code>lab</code>, <code>color()</code>, <code>color-mix()</code>) non
-                  generano falsi positivi.</td>
+                  generano falsi positivi.
+                </td>
               </tr>
               <tr>
                 <td><strong>Immagine distorta</strong></td>
@@ -849,13 +862,15 @@ css.<span class="f">attach</span>();
                 <td><code>warn</code> (rank 4)</td>
                 <td>Legge i fogli di stile attivi in <code>document.styleSheets</code> (saltando quelli con
                   <code>disabled === true</code> o con <code>media</code> che non corrisponde) e trova le proprietà con
-                  priorità <code>important</code> che matchano l'elemento, indicando anche il foglio sorgente.</td>
+                  priorità <code>important</code> che matchano l'elemento, indicando anche il foglio sorgente.
+                </td>
               </tr>
               <tr>
                 <td><strong>Margine negativo</strong></td>
                 <td><code>warn</code> (rank 5)</td>
                 <td>Segnala qualunque lato (<code>margin-top/right/bottom/left</code>) con valore finito minore di
-                  <code>0</code>.</td>
+                  <code>0</code>.
+                </td>
               </tr>
             </tbody>
           </table>
@@ -938,11 +953,13 @@ css.<span class="f">attach</span>();
         </ul>
         <p>Un <code>MutationObserver</code> osserva le modifiche a <code>&lt;style&gt;</code> e
           <code>&lt;link&gt;</code> e ricostruisce la cache delle regole <code>!important</code> solo quando cambiano i
-          fogli di stile.</p>
+          fogli di stile.
+        </p>
 
         <h2 id="pacchetti">Cosa invia al Core</h2>
         <p>Tutti i pacchetti portano <code>source: 'css'</code>. Il formato generale è nel
-          <a href="https://beeenginejs.com/ladybug/concetti/">contratto <code>sendData</code></a>.</p>
+          <a href="https://beeenginejs.com/ladybug/concetti/">contratto <code>sendData</code></a>.
+        </p>
         <div class="bld-table">
           <table>
             <thead>
@@ -960,7 +977,8 @@ css.<span class="f">attach</span>();
                   <code>css.target</code> (selettore o <code>'—'</code>), <code>css.hits</code> (numero problemi sul
                   nodo, <code>'0'</code> fuori bersaglio), <code>css.pin</code> (selettore bloccato o
                   <code>'off'</code>) e <code>css.scan</code> (numero gruppi trovati con <kbd>S</kbd>). Quando spegni la
-                  caccia, <code>css.target</code>, <code>css.hits</code> e <code>css.pin</code> vengono resettati.</td>
+                  caccia, <code>css.target</code>, <code>css.hits</code> e <code>css.pin</code> vengono resettati.
+                </td>
               </tr>
               <tr>
                 <td><code>error</code> / <code>warn</code></td>
@@ -972,7 +990,8 @@ css.<span class="f">attach</span>();
                 <td><code>warn</code></td>
                 <td>Scansione con <kbd>S</kbd></td>
                 <td><code>scan N issue(s). Click a row to outline it.</code> (Se la pagina è pulita, invia
-                  <code>scan clean</code> solo quando è attivo <kbd>F3</kbd> SLOW).</td>
+                  <code>scan clean</code> solo quando è attivo <kbd>F3</kbd> SLOW).
+                </td>
               </tr>
               <tr>
                 <td><code>log</code></td>
@@ -1002,7 +1021,8 @@ css.<span class="f">attach</span>();
               <tr>
                 <td><code>attach()</code></td>
                 <td>Si registra nel Core come <code>css</code> (etichetta <code>F6 CSS</code>, hotkey <code>F6</code>,
-                  <code>enabled: false</code>) e ascolta la visibilità dell'overlay. Restituisce <code>this</code>.</td>
+                  <code>enabled: false</code>) e ascolta la visibilità dell'overlay. Restituisce <code>this</code>.
+                </td>
               </tr>
               <tr>
                 <td><code>detach()</code></td>
@@ -1019,7 +1039,8 @@ css.<span class="f">attach</span>();
                 <td>Esegue una scansione completa e silenziosa per il report (<kbd>F8</kbd>), <strong>anche con la
                     caccia spenta</strong>, senza toccare log, pin o pannelli. Restituisce fino a <strong>80</strong>
                   righe ordinate per gravità (<code>error</code> → <code>warn</code> → <code>ok</code>), oppure
-                  <code>null</code> se l'adapter non è attaccato.</td>
+                  <code>null</code> se l'adapter non è attaccato.
+                </td>
               </tr>
               <tr>
                 <td><code>css.active</code></td>
@@ -1105,16 +1126,19 @@ css.<span class="f">attach</span>();
             dentro un carosello o un drawer chiuso possono comparire tra gli overflow.</li>
           <li><strong>Blocco del click al centro:</strong> <code>pushBlockers</code> campiona il punto centrale del
             rettangolo dell'elemento e i pseudo-elementi <code>::before</code> / <code>::after</code> su
-            <code>html</code> e <code>body</code>.</li>
+            <code>html</code> e <code>body</code>.
+          </li>
           <li><strong>Sfondi complessi:</strong> il confronto di contrasto (<code>paintBehind</code>) legge
-            <code>backgroundColor</code> lungo gli antenati; non valuta immagini di sfondo o gradienti CSS.</li>
+            <code>backgroundColor</code> lungo gli antenati; non valuta immagini di sfondo o gradienti CSS.
+          </li>
         </ul>
 
         <section class="bld-try" id="prova">
           <h3>▶ Prova in console</h3>
           <p>Apri una pagina qualsiasi, premi <kbd>F12</kbd> e incolla (se Chrome blocca l'incolla, scrivi
             <code>allow pasting</code> e riprova). Lo snippet carica <code>bee-ladybug@0.6.4</code> dalla CDN, attacca
-            <code>CSSAdapter</code>, accende subito la caccia CSS e lancia una scansione della pagina:</p>
+            <code>CSSAdapter</code>, accende subito la caccia CSS e lancia una scansione della pagina:
+          </p>
           <div class="bld-code">
             <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
             <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.4/src/index.js'</span>)

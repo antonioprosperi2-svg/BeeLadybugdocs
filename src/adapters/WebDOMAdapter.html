@@ -564,7 +564,12 @@
       }
 
       .bld-docs .bld-ver {
-        display: none
+        order: 1;
+        margin-left: auto
+      }
+
+      .bld-docs .bld-nav ul {
+        order: 2
       }
 
       .bld-docs .bld-wrap {
@@ -732,7 +737,8 @@
 
         <h2 id="uso">Uso base</h2>
         <p>Passa il <code>BeeLadybugCore</code> e, se vuoi limitare l'ispezione a una porzione di pagina, l'elemento
-          <code>root</code> (di default è <code>document.body</code>) e i selettori CSS in <code>watch</code>.</p>
+          <code>root</code> (di default è <code>document.body</code>) e i selettori CSS in <code>watch</code>.
+        </p>
         <div class="bld-code">
           <div class="bld-code-head">app.js<button class="bld-copy">Copia</button></div>
           <pre><code><span class="k">import</span> { BeeLadybugCore, WebDOMAdapter } <span class="k">from</span> <span class="s">'bee-ladybug'</span>;
@@ -747,7 +753,8 @@ dom.<span class="f">attach</span>();</code></pre>
         <p>Con <code>autoTick: true</code> (il default) l'adapter avvia da solo il suo ciclo
           <code>requestAnimationFrame</code>: non devi chiamare <code>pump()</code> a mano. Senza bundler, nell'import
           usa il percorso <code>./node_modules/bee-ladybug/src/index.js</code>, come in <a
-            href="https://beeenginejs.com/ladybug/inizia/">Inizia</a>.</p>
+            href="https://beeenginejs.com/ladybug/inizia/">Inizia</a>.
+        </p>
 
         <h2 id="opzioni">Opzioni</h2>
         <p>I valori predefiniti sono esportati anche in <code>WEB_DOM_ADAPTER_DEFAULTS</code>.</p>
@@ -770,7 +777,8 @@ dom.<span class="f">attach</span>();</code></pre>
               <tr>
                 <td><code>overlay</code></td>
                 <td><code>true</code></td>
-                <td>Monta un canvas fisso a tutta finestra che disegna il box model e i contorni <code>watch</code>.</td>
+                <td>Monta un canvas fisso a tutta finestra che disegna il box model e i contorni <code>watch</code>.
+                </td>
               </tr>
               <tr>
                 <td><code>autoTick</code></td>
@@ -823,7 +831,8 @@ dom.<span class="f">attach</span>();</code></pre>
           elemento sotto il puntatore che sta dentro <code>root</code>, ignorando sempre l'overlay di BeeLadybug e i
           canvas di servizio (<code>[data-bee-ladybug-dom]</code> e <code>[data-bee-ladybug-canvas]</code>).</p>
         <p>Ogni elemento viene identificato con un selettore compatto: <code>tag#id</code> se ha un <code>id</code>,
-          altrimenti <code>tag.classe1.classe2</code> (fino alle prime due classi), altrimenti solo <code>tag</code>.</p>
+          altrimenti <code>tag.classe1.classe2</code> (fino alle prime due classi), altrimenti solo <code>tag</code>.
+        </p>
         <div class="bld-table">
           <table>
             <thead>
@@ -857,7 +866,8 @@ dom.<span class="f">attach</span>();</code></pre>
               <tr>
                 <td>Nodi <code>watch</code></td>
                 <td>Contorno verde (<code>colorWatch</code>) su tutti i nodi che corrispondono ai selettori in
-                  <code>watch</code></td>
+                  <code>watch</code>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -870,20 +880,26 @@ dom.<span class="f">attach</span>();</code></pre>
         <p>Se <code>root</code> è presente, <code>attach()</code> attiva un <code>MutationObserver</code> su
           <code>childList</code>, <code>subtree</code> e sugli attributi <code>class</code>, <code>style</code>,
           <code>hidden</code>, <code>disabled</code> e <code>open</code>. Le modifiche ai nodi interni di BeeLadybug
-          vengono scartate.</p>
-        <p>Le mutazioni vengono raggruppate in una finestra di <strong>180&nbsp;ms</strong> così una raffica di modifiche
-          non intasa la console: allo scadere parte un pacchetto <code>metric</code> (<code>name: 'mutations'</code>) con
+          vengono scartate.
+        </p>
+        <p>Le mutazioni vengono raggruppate in una finestra di <strong>180&nbsp;ms</strong> così una raffica di
+          modifiche
+          non intasa la console: allo scadere parte un pacchetto <code>metric</code> (<code>name: 'mutations'</code>)
+          con
           il totale e un <code>warn</code> sintetico come <code>mutate +2 -1 attr 3</code>.</p>
         <h3>Silenzio automatico durante la CSS hunt (<kbd>F6</kbd>)</h3>
         <p>Quando <code>CSSAdapter</code> (<kbd>F6</kbd>) è attivo a velocità normale (<code>1x</code>) o in freeze
-          (<kbd>F4</kbd>), le righe di <code>hover</code> in console e la parte <code>attr N</code> dei warn di mutazione
+          (<kbd>F4</kbd>), le righe di <code>hover</code> in console e la parte <code>attr N</code> dei warn di
+          mutazione
           vengono silenziate per lasciare spazio ai messaggi CSS. Se invece attivi lo slow-motion (<kbd>F3</kbd>), anche
           hover e attributi tornano visibili. La funzione che decide questa regola è esportata come
-          <code>domNoiseQuiet(cssEnabled, frozen, timeScale)</code>.</p>
+          <code>domNoiseQuiet(cssEnabled, frozen, timeScale)</code>.
+        </p>
 
         <h2 id="pacchetti">Cosa invia al Core</h2>
         <p>Tutti i pacchetti portano <code>source: 'dom'</code>. Il formato generale è nel
-          <a href="https://beeenginejs.com/ladybug/concetti/">contratto <code>sendData</code></a>.</p>
+          <a href="https://beeenginejs.com/ladybug/concetti/">contratto <code>sendData</code></a>.
+        </p>
         <div class="bld-table">
           <table>
             <thead>
@@ -915,7 +931,8 @@ dom.<span class="f">attach</span>();</code></pre>
                 <td>Con un nodo in hover</td>
                 <td>Tre stati HUD: <code>hover</code> (selettore), <code>box</code> (es. <code>320×180</code>) e
                   <code>display</code> (es. <code>flex</code>). Quando l'hover torna a <code>null</code>, tutti e tre
-                  tornano a <code>'—'</code>.</td>
+                  tornano a <code>'—'</code>.
+                </td>
               </tr>
               <tr>
                 <td><code>log</code></td>
@@ -944,7 +961,8 @@ dom.<span class="f">attach</span>();</code></pre>
 
         <h2 id="tempo">Freeze (<kbd>F4</kbd>) e slow (<kbd>F3</kbd>)</h2>
         <p>Quando premi <kbd>F4</kbd> (o chiami <code>bee.freeze()</code>), l'adapter imposta
-          <code>dom.frozen = true</code>: blocca l'elemento in <code>hover</code> sull'ultimo nodo selezionato (così puoi
+          <code>dom.frozen = true</code>: blocca l'elemento in <code>hover</code> sull'ultimo nodo selezionato (così
+          puoi
           spostare il mouse senza perdere il box model) e ignora le nuove mutazioni del DOM finché non togli il freeze.
         </p>
 
@@ -989,13 +1007,15 @@ dom.<span class="f">attach</span>();</code></pre>
           </table>
         </div>
         <p>Le proprietà pubbliche principali sono <code>root</code>, <code>watch</code>, <code>hover</code>,
-          <code>frozen</code> e <code>timeScale</code>.</p>
+          <code>frozen</code> e <code>timeScale</code>.
+        </p>
 
         <h2 id="report">Nel report (<kbd>F8</kbd>)</h2>
         <p>Il report (<kbd>F8</kbd> o <code>bee.exportReport()</code>) include una sezione <code>dom</code> generata da
           <code>snapshot()</code>. Gli elementi nascosti (<code>display: none</code>, <code>visibility: hidden</code>),
           la barra admin di WordPress (<code>#wpadminbar</code>) e l'interfaccia di BeeLadybug vengono esclusi
-          automaticamente.</p>
+          automaticamente.
+        </p>
         <div class="bld-table">
           <table>
             <thead>
@@ -1010,7 +1030,8 @@ dom.<span class="f">attach</span>();</code></pre>
                 <td><code>box</code></td>
                 <td><code>ok</code></td>
                 <td>Box model completo del nodo in <code>hover</code> e dei nodi in <code>watch</code>:
-                  <code>border WxH margin T,R,B,L padding T,R,B,L content WxH display</code>.</td>
+                  <code>border WxH margin T,R,B,L padding T,R,B,L content WxH display</code>.
+                </td>
               </tr>
               <tr>
                 <td><code>negative margin</code></td>
@@ -1021,7 +1042,8 @@ dom.<span class="f">attach</span>();</code></pre>
                 <td><code>clipped</code></td>
                 <td><code>warn</code></td>
                 <td>Nodi il cui contenuto eccede il box di oltre 2&nbsp;px:
-                  <code>scroll SWxSH client CWxCH</code>.</td>
+                  <code>scroll SWxSH client CWxCH</code>.
+                </td>
               </tr>
               <tr>
                 <td><code>collapsed content</code></td>
@@ -1033,19 +1055,22 @@ dom.<span class="f">attach</span>();</code></pre>
                 <td><code>mutations</code></td>
                 <td><code>warn</code> se &gt; 0, altrimenti <code>ok</code></td>
                 <td>Conteggio dell'ultima raffica (o di quella in attesa di flush):
-                  <code>+added -removed attr N</code>.</td>
+                  <code>+added -removed attr N</code>.
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
         <p>Per non appesantire il report su pagine molto grandi, le righe di problemi (<code>negative margin</code>,
-          <code>clipped</code>, <code>collapsed content</code>) sono limitate a un massimo di <strong>40</strong>.</p>
+          <code>clipped</code>, <code>collapsed content</code>) sono limitate a un massimo di <strong>40</strong>.
+        </p>
 
         <section class="bld-try" id="prova">
           <h3>▶ Prova in console</h3>
           <p>Apri una pagina qualsiasi, premi <kbd>F12</kbd> e incolla (se Chrome blocca l'incolla, scrivi
             <code>allow pasting</code> e riprova). Lo snippet carica <code>bee-ladybug@0.6.4</code> dalla CDN e attiva
-            <code>WebDOMAdapter</code> sul <code>body</code> mettendo in <code>watch</code> i titoli e i pulsanti.</p>
+            <code>WebDOMAdapter</code> sul <code>body</code> mettendo in <code>watch</code> i titoli e i pulsanti.
+          </p>
           <div class="bld-code">
             <div class="bld-code-head">console<button class="bld-copy">Copia</button></div>
             <pre><code><span class="f">import</span>(<span class="s">'https://cdn.jsdelivr.net/npm/bee-ladybug@0.6.4/src/index.js'</span>)
@@ -1066,7 +1091,8 @@ dom.<span class="f">attach</span>();</code></pre>
             <pre><code>document.body.dataset.test = <span class="s">'1'</span></code></pre>
           </div>
           <p style="margin:0">Nel pannello compare <code>mutate attr 1</code>. Premi <kbd>F4</kbd> per congelare il box
-            model sull'elemento corrente, <kbd>F2</kbd> per nascondere overlay e contorni, <kbd>F8</kbd> per scaricare il
+            model sull'elemento corrente, <kbd>F2</kbd> per nascondere overlay e contorni, <kbd>F8</kbd> per scaricare
+            il
             report con la sezione <code>dom</code>.</p>
         </section>
 
